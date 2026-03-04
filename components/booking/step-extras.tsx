@@ -54,7 +54,7 @@ export function StepExtras({ state, update }: Props) {
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-2xl py-10">
-        <div className="w-full max-w-xl mx-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 p-6 shadow-xl">
+        <div className="rounded-2xl bg-white/80 backdrop-blur-xl border border-white/20 p-6 shadow-xl">
           <div className="flex flex-col gap-6">
             {/* Pricing Breakdown Section */}
             <div>
@@ -200,5 +200,4 @@ export function StepExtras({ state, update }: Props) {
     </div>
   );
 }
-
 
