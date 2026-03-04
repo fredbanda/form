@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Yoco Redirect</title>
+</head>
+<body>
+    <h1>Test Yoco Checkout URL</h1>
+    <button onclick="testRedirect()">Test Direct Redirect</button>
+    <div id="result"></div>
+
+    <script>
+        function testRedirect() {
+            // Use the LATEST checkout URL from the test
+            const checkoutUrl = "https://c.yoco.com/checkout/ch_kg9YGpwV7rXtk5kFDmMuJk1g";
+            
+            console.log("Testing redirect to:", checkoutUrl);
+            
+            // Try opening in new tab first to test if URL is valid
+            const newWindow = window.open(checkoutUrl, '_blank');
+            
+            if (newWindow) {
+                document.getElementById('result').innerHTML = 
+                    `<p>✅ Opened in new tab. If it works, the URL is valid.</p>
+                     <p><a href="${checkoutUrl}" target="_blank">Click here to test</a></p>`;
+            } else {
+                document.getElementById('result').innerHTML = 
+                    `<p>❌ Popup blocked. Try clicking the link:</p>
+                     <p><a href="${checkoutUrl}" target="_blank">${checkoutUrl}</a></p>`;
+            }
+        }
+    </script>
+</body>
+</html>

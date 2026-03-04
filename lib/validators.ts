@@ -1,0 +1,48 @@
+import { z } from "zod"
+
+export const serviceTypes = [
+  "from_airport",
+  "from_lodge",
+] as const
+
+export type ServiceType = (typeof serviceTypes)[number]
+
+export const serviceTypeLabels: Record<ServiceType, { title: string; description: string }> = {
+  from_airport: {
+    title: "Pickup from Airport",
+    description: "We'll collect you from the airport",
+  },
+  from_lodge: {
+    title: "Pickup from Lodge",
+    description: "We'll collect you from your accommodation",
+  },
+}
+
+export const bookingSchema = z.object({
+  serviceType: z.enum(serviceTypes),
+  pickupDate: z.string().min(1, "Date is required"),
+  pickupTime: z.string().min(1, "Time is required"),
+  extraPeople: z.number().min(0).max(50),
+  selectedExtras: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      price: z.number(),
+    })
+  ),
+  specialRequests: z.string().optional(),
+  customerName: z.string().min(1, "Full name is required"),
+  customerPhone: z.string().min(10, "Valid phone number required"),
+  customerAltPhone: z.string().optional(),
+  customerEmail: z.string().email("Valid email is required"),
+  promoCode: z.string().optional(),
+})
+
+export type BookingFormData = z.infer<typeof bookingSchema>
+
+export const customerDetailsSchema = z.object({
+  customerName: z.string().min(1, "Full name is required"),
+  customerPhone: z.string().min(10, "Valid phone number required"),
+  customerAltPhone: z.string().optional(),
+  customerEmail: z.string().email("Valid email is required"),
+})

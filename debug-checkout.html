@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Checkout</title>
+</head>
+<body>
+    <h1>Debug Checkout Flow</h1>
+    <button onclick="testCheckout()">Test Checkout</button>
+    <div id="result"></div>
+
+    <script>
+        async function testCheckout() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch('/api/bookings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        serviceType: 'from_airport',
+                        pickupDate: '2024-03-10T10:00',
+                        pickupTime: '10:00',
+                        extraPeople: 0,
+                        extras: [],
+                        specialRequests: 'Debug test',
+                        customerName: 'Debug User',
+                        customerPhone: '+27123456789',
+                        customerEmail: 'debug@test.com',
+                        promoCode: null,
+                        subtotal: 8000,
+                        vatAmount: 1200,
+                        totalAmount: 9200,
+                    })
+                });
+
+                const data = await response.json();
+                console.log('API Response:', data);
+                
+                if (data.checkoutUrl) {
+                    resultDiv.innerHTML = `
+                        <p>✅ API Success!</p>
+                        <p>Checkout URL: <a href="${data.checkoutUrl}" target="_blank">${data.checkoutUrl}</a></p>
+                        <p>Redirecting in 3 seconds...</p>
+                    `;
+                    
+                    setTimeout(() => {
+                        window.location.href = data.checkoutUrl;
+                    }, 3000);
+                } else {
+                    resultDiv.innerHTML = `❌ No checkout URL: ${JSON.stringify(data)}`;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
