@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { BookingState } from "@/lib/booking-store";
 import { ExecutiveToursFooterBrand } from "@/components/booking/executive-brand";
+import Image from "next/image"
+import HeaderImage from "@/assets/tablem.jpg"
 
 interface Props {
   state: BookingState;
@@ -13,6 +15,18 @@ interface Props {
 export function StepCustomerDetails({ state, update }: Props) {
   return (
     <div className="flex flex-col gap-4">
+      {/* Image Header */}
+      <div className="relative w-full h-40 sm:h-48 mb-4 overflow-hidden rounded-2xl">
+        <Image
+          src={HeaderImage}
+          alt="Table Mountain"
+          fill
+          priority
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-black/30" />
+      </div>
+
       <h1 className="mb-2 text-2xl font-semibold text-foreground text-balance">
         {"Let's add your details"}
       </h1>
@@ -81,8 +95,9 @@ export function StepCustomerDetails({ state, update }: Props) {
         By proceeding, you consent to get calls, WhatsApp or SMS messages,
         including by automated means, from Centurion Tours and its affiliates.
       </p>
-       <ExecutiveToursFooterBrand />
+      <ExecutiveToursFooterBrand />
     </div>
   );
 }
+
 

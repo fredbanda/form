@@ -26,6 +26,8 @@ import {
 import { serviceTypeLabels } from "@/lib/validators";
 import type { BookingState } from "@/lib/booking-store";
 import { toast } from "sonner";
+import Image from "next/image"
+import Canvas from "@/assets/capet.jpg"
 
 interface Props {
   state: BookingState;
@@ -103,6 +105,18 @@ export function StepConfirmation({ state, update }: Props) {
 
   return (
     <div className="flex flex-col">
+      {/* Image Header */}
+      <div className="relative w-full h-40 sm:h-48 mb-6 overflow-hidden rounded-2xl">
+        <Image
+          src={Canvas}
+          alt="Table Mountain"
+          fill
+          priority
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+      </div>
+
       <h1 className="mb-6 text-2xl font-semibold text-foreground text-balance">
         Confirm your booking
       </h1>
@@ -293,4 +307,5 @@ export function StepConfirmation({ state, update }: Props) {
     </div>
   );
 }
+
 

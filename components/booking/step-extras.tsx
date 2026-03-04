@@ -39,22 +39,20 @@ export function StepExtras({ state, update }: Props) {
   const isNight = isNightTime(state.pickupTime)
 
   return (
-    <div className="relative w-full min-h-screen">
-      {/* Background Image */}
-      <div className="absolute inset-0 -z-10">
-        <Image
-          src={Carpet}
-          alt="Cape Town Aerial"
-          fill
-          priority
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-black/50" />
-      </div>
+  <div className="flex flex-col">
 
-      {/* Content */}
-      <div className="relative z-10 mx-auto max-w-2xl py-10">
-        <div className="rounded-2xl bg-white/80 backdrop-blur-xl border border-white/20 p-6 shadow-xl">
+    {/* Image Header */}
+    <div className="relative w-full h-40 sm:h-48 mb-6 overflow-hidden rounded-2xl">
+      <Image
+        src={Carpet}
+        alt="Table Mountain"
+        fill
+        priority
+        className="object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+    </div>
+          
           <div className="flex flex-col gap-6">
             {/* Pricing Breakdown Section */}
             <div>
@@ -196,8 +194,7 @@ export function StepExtras({ state, update }: Props) {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+
   );
 }
 
