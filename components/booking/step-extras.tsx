@@ -150,20 +150,6 @@ export function StepExtras({ state, update }: Props) {
             </div>
           </div>
         </div>
-
-
-        {/* Special Requests */}
-        <div>
-          <h2 className="mb-3 text-lg font-semibold text-foreground">
-            Special Requests
-          </h2>
-          <Textarea
-            placeholder="Any special requests or notes?"
-            value={state.specialRequests}
-            onChange={(e) => update({ specialRequests: e.target.value })}
-            className="min-h-24 resize-none rounded-xl bg-muted/50"
-          />
-        </div>
       </div>
     </div>
   );

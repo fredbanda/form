@@ -8,6 +8,7 @@ import { ExecutiveToursFooterBrand } from "@/components/booking/executive-brand"
 import Image from "next/image";
 import HeaderImage from "@/assets/tablem.jpg";
 import ExecutiveLogo from "@/assets/logo-main.jpg";
+import PhoneField from "@/components/booking/calling-code"
 
 interface Props {
   state: BookingState;
@@ -62,25 +63,10 @@ export function StepCustomerDetails({ state, update }: Props) {
         />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <Label htmlFor="phone" className="sr-only">
-          WhatsApp/Contact number
-        </Label>
-        <div className="flex items-center gap-2">
-          <span className="flex h-12 items-center gap-1.5 rounded-lg border border-border bg-card px-3 text-sm text-muted-foreground">
-            <span className="text-base">🇿🇦</span>
-            <span>+27</span>
-          </span>
-          <Input
-            id="phone"
-            type="tel"
-            placeholder="WhatsApp/Contact number"
-            value={state.customerPhone}
-            onChange={(e) => update({ customerPhone: e.target.value })}
-            className="h-12 flex-1 rounded-lg"
-          />
-        </div>
-      </div>
+      <PhoneField
+        value={state.customerPhone}
+        onChange={(value) => update({ customerPhone: value })}
+      />
 
       {/* Airport to Lodge Specific Fields */}
       {isAirportToLodge && (
@@ -229,5 +215,6 @@ export function StepCustomerDetails({ state, update }: Props) {
     </div>
   );
 }
+
 
 
