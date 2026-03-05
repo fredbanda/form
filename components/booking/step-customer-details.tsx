@@ -222,10 +222,12 @@ export function StepCustomerDetails({ state, update }: Props) {
       </div>
       <p className="text-xs leading-relaxed text-muted-foreground">
         By proceeding, you consent to get calls, WhatsApp or SMS messages,
-        including by automated means, from Centurion Tours and its affiliates.
+        including by automated means, from Executive Tours & Transfers and its
+        affiliates.
       </p>
       <ExecutiveToursFooterBrand />
     </div>
   );
 }
+
 
