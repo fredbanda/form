@@ -10,10 +10,10 @@ export const BASE_PRICE_NIGHT = 12000 // R120 for first person (18:00 - 06:00)
 export const LATE_NIGHT_SURCHARGE = 10000 // R100 extra for night (18:00 - 06:00)
 export const EXTRA_PERSON_PRICE = 6000 // R60 per additional person
 
-export const EXTRAS: Extra[] = [
-  { id: "baby-seat", name: "Baby Seat", price: 0 },
-  { id: "bottled-water", name: "Bottled water", price: 1500 },
-]
+// export const EXTRAS: Extra[] = [
+//   { id: "baby-seat", name: "Baby Seat", price: 0 },
+//   { id: "bottled-water", name: "Bottled water", price: 1500 },
+// ]
 
 export const VAT_RATE = 0.15
 

@@ -1,7 +1,7 @@
 "use client"
 
 import { Plus, Minus, Users, User, Moon } from "lucide-react"
-import { EXTRAS, formatZAR, EXTRA_PERSON_PRICE, BASE_PRICE_DAY, LATE_NIGHT_SURCHARGE, isNightTime, type Extra } from "@/lib/pricing"
+import { formatZAR, EXTRA_PERSON_PRICE, BASE_PRICE_DAY, LATE_NIGHT_SURCHARGE, isNightTime, type Extra } from "@/lib/pricing"
 import { Textarea } from "@/components/ui/textarea"
 import type { BookingState } from "@/lib/booking-store"
 import Image from "next/image"
@@ -151,40 +151,6 @@ export function StepExtras({ state, update }: Props) {
           </div>
         </div>
 
-        {/* Other Extras */}
-        {EXTRAS.length > 0 && (
-          <div>
-            <h2 className="mb-3 text-lg font-semibold text-foreground">
-              Other Extras
-            </h2>
-            <div className="grid grid-cols-2 gap-3">
-              {EXTRAS.map((extra) => {
-                const selected = state.selectedExtras.some(
-                  (e) => e.id === extra.id
-                );
-                return (
-                  <button
-                    key={extra.id}
-                    type="button"
-                    onClick={() => toggleExtra(extra)}
-                    className={`flex flex-col items-start rounded-xl border-2 px-4 py-4 text-left transition-all ${
-                      selected
-                        ? "border-foreground bg-card shadow-sm"
-                        : "border-border bg-card hover:border-muted-foreground/30"
-                    }`}
-                  >
-                    <p className="font-semibold text-foreground">
-                      {extra.name}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {extra.price === 0 ? "Free" : formatZAR(extra.price)}
-                    </p>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
 
         {/* Special Requests */}
         <div>
