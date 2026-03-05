@@ -28,6 +28,7 @@ import type { BookingState } from "@/lib/booking-store";
 import { toast } from "sonner";
 import Image from "next/image"
 import Canvas from "@/assets/capet.jpg"
+import ExecutiveLogo from "@/assets/logo-main.jpg";
 
 interface Props {
   state: BookingState;
@@ -121,6 +122,16 @@ export function StepConfirmation({ state, update }: Props) {
           className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                {/* Logo in top-left corner */}
+                <div className="absolute top-4 left-4 z-10 ">
+                  <Image
+                    src={ExecutiveLogo}
+                    alt="Executive Tours"
+                    width={120}
+                    height={60}
+                    className="object-contain rounded-full"
+                  />
+                </div>
       </div>
 
       <h1 className="mb-6 text-2xl font-semibold text-foreground text-balance">
