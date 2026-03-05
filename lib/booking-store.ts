@@ -5,7 +5,8 @@ export interface BookingState {
   step: number
   serviceType: ServiceType | null
   pickupDate: string
-  pickupTime: string
+  pickupHour: string
+  pickupMinute: string
   extraPeople: number
   selectedExtras: Extra[]
   specialRequests: string
@@ -14,13 +15,21 @@ export interface BookingState {
   customerAltPhone: string
   customerEmail: string
   promoCode: string
+  // Airport to Lodge specific fields
+  flightNumber: string
+  arrivalDate: string
+  numberOfPassengers: number
+  requireNextMorningTransfer: boolean
+  // Lodge to Airport specific fields
+  roomNumber: string
 }
 
 export const initialBookingState: BookingState = {
   step: 0,
   serviceType: null,
   pickupDate: "",
-  pickupTime: "",
+  pickupHour: "",
+  pickupMinute: "",
   extraPeople: 0,
   selectedExtras: [],
   specialRequests: "",
@@ -29,6 +38,13 @@ export const initialBookingState: BookingState = {
   customerAltPhone: "",
   customerEmail: "",
   promoCode: "",
+  // Airport to Lodge specific fields
+  flightNumber: "",
+  arrivalDate: "",
+  numberOfPassengers: 1,
+  requireNextMorningTransfer: false,
+  // Lodge to Airport specific fields
+  roomNumber: "",
 }
 
 export const STEP_TITLES = [

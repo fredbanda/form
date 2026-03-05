@@ -11,6 +11,9 @@ import { ExecutiveToursFooterBrand } from "@/components/booking/executive-brand"
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import HeaderImage from "@/assets/tablem.jpg";
+import AirportLogo from "@/assets/airport.jpeg";
+import LodgeLogo from "@/assets/roadlodge.jpeg";
+import ExecutiveLogo from "@/assets/logo-main.jpg";
 
 interface Props {
   state: BookingState;
@@ -23,11 +26,16 @@ const serviceIcons: Record<ServiceType, React.ReactNode> = {
   from_lodge: <Building className="h-5 w-5" />,
 };
 
+const serviceLogos: Record<ServiceType, any> = {
+  from_airport: AirportLogo,
+  from_lodge: LodgeLogo,
+};
+
 function getGreeting() {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
+  if (hour < 12) return "Good morning our dear valued client. Please complete the following booking form";
+  if (hour < 17) return "Good afternoon our dear valued client. Please complete the following booking form";
+  return "Good evening our dear valued client. Please complete the following booking form ";
 }
 
 function useGreeting() {
@@ -40,20 +48,27 @@ function useGreeting() {
   return greeting;
 }
 
-// Generate time options from 00:00 to 23:30 in 30-minute increments
-function generateTimeOptions() {
+// Generate hour options (00-23)
+function generateHourOptions() {
   const options: string[] = [];
   for (let h = 0; h < 24; h++) {
-    for (let m = 0; m < 60; m += 30) {
-      const hh = h.toString().padStart(2, "0");
-      const mm = m.toString().padStart(2, "0");
-      options.push(`${hh}:${mm}`);
-    }
+    const hh = h.toString().padStart(2, "0");
+    options.push(hh);
   }
   return options;
 }
 
-const TIME_OPTIONS = generateTimeOptions();
+// Generate minute options (00, 05, 10, 15, ..., 55)
+function generateMinuteOptions() {
+  const options: string[] = [];
+  for (let m = 0; m < 60; m += 5) {
+    options.push(m.toString().padStart(2, "0"));
+  }
+  return options;
+}
+
+const HOUR_OPTIONS = generateHourOptions();
+const MINUTE_OPTIONS = generateMinuteOptions();
 
 export function StepServiceType({ state, update, onNext }: Props) {
   const greeting = useGreeting();
@@ -65,29 +80,40 @@ export function StepServiceType({ state, update, onNext }: Props) {
   const canProceed =
     state.serviceType !== null &&
     state.pickupDate.trim().length > 0 &&
-    state.pickupTime.trim().length > 0;
+    state.pickupHour.trim().length > 0 &&
+    state.pickupMinute.trim().length > 0;
 
   return (
- <div className="flex flex-col">
-    {/* Image Header */}
-    <div className="relative w-full h-48 mb-6 overflow-hidden rounded-2xl">
-      <Image
-        src={HeaderImage}
-        alt="Table Mountain"
-        fill
-        priority
-        className="object-cover"
-      />
-      <div className="absolute inset-0 bg-black/30" /> {/* subtle overlay */}
-    </div>
+    <div className="flex flex-col">
+      {/* Image Header */}
+      <div className="relative w-full h-48 mb-6 overflow-hidden rounded-2xl">
+        {/* Background Image */}
+        <Image
+          src={HeaderImage}
+          alt="Table Mountain"
+          fill
+          priority
+          className="object-cover"
+        />
 
-    <h1 className="mb-1 text-2xl font-semibold text-foreground text-balance">
-      {greeting},
-    </h1>
-      <h2 className="mb-8 text-2xl font-semibold text-muted-foreground text-balance">
-        what would you like to book?
-      </h2>
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/30" />
 
+        {/* Logo in top-left corner */}
+        <div className="absolute top-4 left-4 z-10 ">
+          <Image
+            src={ExecutiveLogo}
+            alt="Executive Tours"
+            width={120}
+            height={60}
+            className="object-contain rounded-full"
+          />
+        </div>
+      </div>
+
+      <p className="mb-1 font-semibold text-foreground text-center">
+        {greeting},
+      </p>
       {/* Service Type Selection */}
       <div className="flex flex-col gap-3 mb-8">
         {(Object.keys(serviceTypeLabels) as ServiceType[]).map((type) => {
@@ -105,9 +131,19 @@ export function StepServiceType({ state, update, onNext }: Props) {
                   : "border-border bg-card hover:border-muted-foreground/30"
               }`}
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                {serviceIcons[type]}
-              </span>
+              <div className="flex items-center gap-3">
+                <Image
+                  src={serviceLogos[type]}
+                  alt="location logo"
+                  width={60}
+                  height={60}
+                  className="rounded-md object-contain"
+                />
+
+                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                  {serviceIcons[type]}
+                </span>
+              </div>
               <div>
                 <p className="font-semibold text-foreground">{label.title}</p>
                 <p className="text-sm text-muted-foreground">
@@ -138,23 +174,47 @@ export function StepServiceType({ state, update, onNext }: Props) {
               className="h-12 rounded-xl bg-card"
             />
           </div>
+        </div>
+
+        <div className="flex gap-3">
           <div className="flex-1">
             <Label
-              htmlFor="pickup-time"
+              htmlFor="pickup-hour"
               className="text-sm font-medium text-foreground mb-1.5 block"
             >
-              Time
+              Hour
             </Label>
             <select
-              id="pickup-time"
-              value={state.pickupTime}
-              onChange={(e) => update({ pickupTime: e.target.value })}
+              id="pickup-hour"
+              value={state.pickupHour}
+              onChange={(e) => update({ pickupHour: e.target.value })}
               className="flex h-12 w-full rounded-xl border border-input bg-card px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
-              <option value="">Select time</option>
-              {TIME_OPTIONS.map((time) => (
-                <option key={time} value={time}>
-                  {time}
+              <option value="">Hour</option>
+              {HOUR_OPTIONS.map((hour) => (
+                <option key={hour} value={hour}>
+                  {hour}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex-1">
+            <Label
+              htmlFor="pickup-minute"
+              className="text-sm font-medium text-foreground mb-1.5 block"
+            >
+              Minutes
+            </Label>
+            <select
+              id="pickup-minute"
+              value={state.pickupMinute}
+              onChange={(e) => update({ pickupMinute: e.target.value })}
+              className="flex h-12 w-full rounded-xl border border-input bg-card px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <option value="">Minutes</option>
+              {MINUTE_OPTIONS.map((minute) => (
+                <option key={minute} value={minute}>
+                  {minute}
                 </option>
               ))}
             </select>
@@ -175,4 +235,8 @@ export function StepServiceType({ state, update, onNext }: Props) {
     </div>
   );
 }
+
+
+
+
 

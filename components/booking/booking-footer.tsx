@@ -15,11 +15,25 @@ function canProceed(state: BookingState): boolean {
     case 1: // extras (always can proceed)
       return true
     case 2: // customer details
-      return (
+      const basicFieldsValid = (
         state.customerName.trim().length > 0 &&
         state.customerPhone.trim().length >= 10 &&
         state.customerEmail.includes("@")
-      )
+      );
+      
+      // Service-specific validation
+      if (state.serviceType === "from_airport") {
+        return basicFieldsValid && 
+               state.flightNumber.trim().length > 0 &&
+               state.arrivalDate.trim().length > 0 &&
+               state.numberOfPassengers > 0;
+      } else if (state.serviceType === "from_lodge") {
+        return basicFieldsValid && 
+               state.roomNumber.trim().length > 0 &&
+               state.numberOfPassengers > 0;
+      }
+      
+      return basicFieldsValid;
     default:
       return true
   }

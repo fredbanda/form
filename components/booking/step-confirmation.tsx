@@ -39,7 +39,7 @@ export function StepConfirmation({ state, update }: Props) {
   const [showPromo, setShowPromo] = useState(false);
 
   const pricing = calculatePricing(
-    state.pickupTime,
+    state.pickupHour && state.pickupMinute ? `${state.pickupHour}:${state.pickupMinute}` : "00:00",
     state.extraPeople,
     state.selectedExtras
   );
@@ -61,8 +61,8 @@ export function StepConfirmation({ state, update }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           serviceType: state.serviceType,
-          pickupDate: `${state.pickupDate}T${state.pickupTime || "00:00"}`,
-          pickupTime: state.pickupTime,
+          pickupDate: `${state.pickupDate}T${state.pickupHour}:${state.pickupMinute || "00"}`,
+          pickupTime: `${state.pickupHour}:${state.pickupMinute}`,
           extraPeople: state.extraPeople,
           extras: state.selectedExtras,
           specialRequests: state.specialRequests || null,
@@ -71,6 +71,12 @@ export function StepConfirmation({ state, update }: Props) {
           customerAltPhone: state.customerAltPhone || null,
           customerEmail: state.customerEmail,
           promoCode: state.promoCode || null,
+          // Service-specific fields
+          flightNumber: state.flightNumber || null,
+          arrivalDate: state.arrivalDate || null,
+          numberOfPassengers: state.numberOfPassengers,
+          requireNextMorningTransfer: state.requireNextMorningTransfer,
+          roomNumber: state.roomNumber || null,
           subtotal: pricing.subtotal,
           vatAmount: pricing.vatAmount,
           totalAmount: pricing.total,
@@ -145,7 +151,7 @@ export function StepConfirmation({ state, update }: Props) {
           </div>
           <div className="flex items-center gap-3">
             <Clock className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-foreground">{state.pickupTime}</span>
+            <span className="text-sm text-foreground">{state.pickupHour}:{state.pickupMinute}</span>
             {pricing.isNight && (
               <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                 Night rate
@@ -184,6 +190,57 @@ export function StepConfirmation({ state, update }: Props) {
           </div>
         </div>
       </div>
+
+      {/* Service-specific details */}
+      {(state.serviceType === "from_airport" || state.serviceType === "from_lodge") && (
+        <div className="mt-3 rounded-xl border border-border bg-card p-5">
+          <h3 className="mb-3 text-sm font-medium text-foreground">Additional Details</h3>
+          <div className="flex flex-col gap-2">
+            {state.serviceType === "from_airport" && (
+              <>
+                {state.flightNumber && (
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground w-20">Flight:</span>
+                    <span className="text-sm text-foreground">{state.flightNumber}</span>
+                  </div>
+                )}
+                {state.arrivalDate && (
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground w-20">Arrival:</span>
+                    <span className="text-sm text-foreground">
+                      {new Date(state.arrivalDate).toLocaleDateString("en-GB")}
+                    </span>
+                  </div>
+                )}
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-muted-foreground w-20">Passengers:</span>
+                  <span className="text-sm text-foreground">{state.numberOfPassengers}</span>
+                </div>
+                {state.requireNextMorningTransfer && (
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground w-20">Next morning:</span>
+                    <span className="text-sm text-foreground">Transfer required</span>
+                  </div>
+                )}
+              </>
+            )}
+            {state.serviceType === "from_lodge" && (
+              <>
+                {state.roomNumber && (
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground w-20">Room:</span>
+                    <span className="text-sm text-foreground">{state.roomNumber}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-muted-foreground w-20">Passengers:</span>
+                  <span className="text-sm text-foreground">{state.numberOfPassengers}</span>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Summary */}
       <div className="mt-6">
