@@ -47,6 +47,11 @@ export function getTimeCategory(
   return "evening";
 }
 
+export function isNightTime(pickupTime: string): boolean {
+  const category = getTimeCategory(pickupTime);
+  return category === "night" || category === "late-night";
+}
+
 export function isBookingAvailable(pickupTime: string): boolean {
   const category = getTimeCategory(pickupTime);
   // Booking not available during day hours (06:00 - 17:00) - users must WhatsApp
