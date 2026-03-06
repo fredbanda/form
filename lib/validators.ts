@@ -1,11 +1,8 @@
-import { z } from "zod"
+import { z } from "zod";
 
-export const serviceTypes = [
-  "from_airport",
-  "from_lodge",
-] as const
+export const serviceTypes = ["from_airport", "from_lodge"] as const;
 
-export type ServiceType = (typeof serviceTypes)[number]
+export type ServiceType = (typeof serviceTypes)[number];
 
 export const serviceTypeLabels: Record<
   ServiceType,
@@ -13,13 +10,11 @@ export const serviceTypeLabels: Record<
 > = {
   from_airport: {
     title: "Pickup from Airport to Road Lodge",
-    description:
-      "Private transfer from the airport to the Road Lodge",
+    description: "Private transfer from the airport to the Road Lodge",
   },
   from_lodge: {
     title: "Pickup from Road Lodge to Airport",
-    description:
-      "Private transfer from Lodge to Airport",
+    description: "Private transfer from Lodge to Airport",
   },
 };
 
@@ -45,19 +40,23 @@ export const bookingSchema = z.object({
   // Airport to Lodge specific fields
   flightNumber: z.string().optional(),
   arrivalDate: z.string().optional(),
+  arrivalTime: z.string().optional(),
   numberOfPassengers: z.number().optional(),
   requireNextMorningTransfer: z.boolean().optional(),
+  nextMorningTransferTime: z.string().optional(),
+  nextMorningPassengers: z.number().optional(),
   // Lodge to Airport specific fields
   roomNumber: z.string().optional(),
-})
+  transferTime: z.string().optional(),
+  transferPassengers: z.number().optional(),
+});
 
-export type BookingFormData = z.infer<typeof bookingSchema>
+export type BookingFormData = z.infer<typeof bookingSchema>;
 
 export const customerDetailsSchema = z.object({
   customerName: z.string().min(1, "Full name is required"),
   customerPhone: z.string().min(10, "Valid phone number required"),
   customerAltPhone: z.string().optional(),
   customerEmail: z.string().email("Valid email is required"),
-})
-
+});
 

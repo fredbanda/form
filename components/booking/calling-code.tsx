@@ -1,7 +1,9 @@
 "use client";
 
 import PhoneInput from "react-phone-number-input";
+// @ts-ignore
 import "react-phone-number-input/style.css";
+
 
 type PhoneFieldProps = {
   value: string;

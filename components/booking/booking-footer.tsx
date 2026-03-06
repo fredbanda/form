@@ -1,46 +1,28 @@
-"use client"
+"use client";
 
-import { ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import type { BookingState } from "@/lib/booking-store"
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import type { BookingState } from "@/lib/booking-store";
 
 interface BookingFooterProps {
-  onBack: () => void
-  onNext: () => void
-  state: BookingState
+  onBack: () => void;
+  onNext: () => void;
+  state: BookingState;
 }
 
 function canProceed(state: BookingState): boolean {
   switch (state.step) {
     case 1: // extras (always can proceed)
-      return true
-    case 2: // customer details
-      const basicFieldsValid = (
-        state.customerName.trim().length > 0 &&
-        state.customerPhone.trim().length >= 10 &&
-        state.customerEmail.includes("@")
-      );
-      
-      // Service-specific validation
-      if (state.serviceType === "from_airport") {
-        return basicFieldsValid && 
-               state.flightNumber.trim().length > 0 &&
-               state.arrivalDate.trim().length > 0 &&
-               state.numberOfPassengers > 0;
-      } else if (state.serviceType === "from_lodge") {
-        return basicFieldsValid && 
-               state.roomNumber.trim().length > 0 &&
-               state.numberOfPassengers > 0;
-      }
-      
-      return basicFieldsValid;
+      return true;
+    case 2: // customer details (only email and alternative phone)
+      return state.customerEmail.includes("@");
     default:
-      return true
+      return true;
   }
 }
 
 export function BookingFooter({ onBack, onNext, state }: BookingFooterProps) {
-  const valid = canProceed(state)
+  const valid = canProceed(state);
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background px-5 py-4">
@@ -62,5 +44,6 @@ export function BookingFooter({ onBack, onNext, state }: BookingFooterProps) {
         </Button>
       </div>
     </div>
-  )
+  );
 }
+
