@@ -131,34 +131,35 @@ export function StepServiceType({ state, update, onNext }: Props) {
 
   return (
     <div className="flex flex-col">
-  {/* Image Header */}
-  <div className="relative w-full h-48 mb-6 overflow-hidden rounded-2xl">
-    
-    {/* Background Image */}
-    <Image
-      src={HeaderImage}
-      alt="Table Mountain"
-      fill
-      priority
-      className="object-cover"
-    />
+      {/* Image Header */}
+      <div className="relative w-full h-48 mb-6 overflow-hidden rounded-2xl">
+        {/* Background Image */}
+        <Image
+          src={HeaderImage}
+          alt="Table Mountain"
+          fill
+          priority
+          className="object-cover"
+        />
 
-    {/* Dark overlay */}
-    <div className="absolute inset-0 bg-black/30" />
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/30" />
 
-    {/* Logo in bottom-left corner */}
-    <div className="absolute bottom-4 left-4 z-10">
-      <Image
-        src={ExecutiveLogo}
-        alt="Executive Tours"
-        width={80}
-        height={40}
-        className="object-contain rounded-full"
-      />
-    </div>
-  </div>
+        {/* Logo in bottom-left corner */}
+        <div className="absolute bottom-4 left-4 z-10">
+          <Image
+            src={ExecutiveLogo}
+            alt="Executive Tours"
+            width={80}
+            height={40}
+            className="object-contain rounded-full"
+          />
+        </div>
+      </div>
 
-
+      <h3 className="mb-4 bold text-lg text-foreground">
+        Dear valued client, please complete the booking form below.
+      </h3>
       {/* Service Type Selection */}
       <div className="flex flex-col gap-3 mb-8">
         {(Object.keys(serviceTypeLabels) as ServiceType[]).map((type) => {
@@ -591,4 +592,6 @@ export function StepServiceType({ state, update, onNext }: Props) {
     </div>
   );
 }
+
+
 
