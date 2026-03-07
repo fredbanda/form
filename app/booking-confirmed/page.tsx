@@ -36,7 +36,7 @@ export default async function BookingConfirmedPage({ searchParams }: Props) {
 
   const ref = booking.id.slice(0, 8).toUpperCase()
   const whatsappLink = generateWhatsAppLink(
-    process.env.ADMIN_WHATSAPP_NUMBER || "27796553555",
+    process.env.ADMIN_WHATSAPP_NUMBER || "27796552077",
     generateCustomerWhatsAppMessage(ref)
   )
 
