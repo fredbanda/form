@@ -231,6 +231,13 @@ export function StepConfirmation({ state, update }: Props) {
                     month: "long",
                     year: "numeric",
                   })
+                : state.serviceType === "from_lodge" && state.pickupDate
+                ? new Date(state.pickupDate).toLocaleDateString("en-GB", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })
                 : formattedDate}
             </span>
           </div>
@@ -389,6 +396,16 @@ export function StepConfirmation({ state, update }: Props) {
                     </span>
                     <span className="text-sm text-foreground">
                       {state.transferTime}
+                    </span>
+                  </div>
+                )}
+                {state.pickupDate && (
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground w-20">
+                      Transfer date:
+                    </span>
+                    <span className="text-sm text-foreground">
+                      {new Date(state.pickupDate).toLocaleDateString("en-GB")}
                     </span>
                   </div>
                 )}

@@ -91,6 +91,7 @@ export function StepServiceType({ state, update, onNext }: Props) {
         state.customerName.trim().length > 0 &&
         state.customerPhone.trim().length > 0 &&
         state.roomNumber.trim().length > 0 &&
+        state.pickupDate.trim().length > 0 &&
         state.transferTime.trim().length > 0 &&
         state.transferPassengers > 0 &&
         isBookingAvailable(state.transferTime)
@@ -466,6 +467,24 @@ export function StepServiceType({ state, update, onNext }: Props) {
               placeholder="Room number"
               value={state.roomNumber}
               onChange={(e) => update({ roomNumber: e.target.value })}
+              className="h-12 rounded-lg"
+            />
+          </div>
+
+          {/* Date of Transfer */}
+          <div className="flex flex-col gap-1">
+            <Label
+              htmlFor="transfer-date"
+              className="text-sm font-medium text-foreground"
+            >
+              Date of Transfer *
+            </Label>
+            <Input
+              id="transfer-date"
+              type="date"
+              value={state.pickupDate}
+              onChange={(e) => update({ pickupDate: e.target.value })}
+              min={new Date().toISOString().split("T")[0]}
               className="h-12 rounded-lg"
             />
           </div>
