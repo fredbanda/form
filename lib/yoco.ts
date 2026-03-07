@@ -1,6 +1,7 @@
 import crypto from "crypto";
 
-const YOCO_API_URL = "https://payments.yoco.com/api/checkouts";
+const YOCO_API_URL =
+  process.env.YOCO_API_URL || "https://payments.yoco.com/api/checkouts";
 
 interface CreateCheckoutParams {
   amountInCents: number;
@@ -16,12 +17,15 @@ export async function createYocoCheckout({
   customerEmail,
   customerName,
 }: CreateCheckoutParams) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const appUrl = rawAppUrl.replace(/\/+$/, "");
 
   console.log("[Yoco] Creating simplified checkout (no line_items):", {
     amount: amountInCents,
     bookingId,
     customerName,
+    apiUrl: YOCO_API_URL,
+    appUrl,
   });
 
   // Use simplified payload that matches working medusa-payment-yoco implementation
@@ -45,15 +49,30 @@ export async function createYocoCheckout({
       // Removed lineItems - this was causing the "page not found" error
     }),
   });
-    console.log(response)
 
-  if (!response.ok) {
-    const error = await response.text();
-    console.error("[Yoco] Checkout creation failed:", error);
-    throw new Error(`Yoco checkout creation failed: ${error}`);
+  const responseText = await response.text();
+  let data: any = null;
+
+  try {
+    data = responseText ? JSON.parse(responseText) : null;
+  } catch {
+    data = null;
   }
 
-  const data = await response.json();
+  console.log("[Yoco] HTTP response:", {
+    status: response.status,
+    ok: response.ok,
+    body: data ?? responseText,
+  });
+
+  if (!response.ok) {
+    const errorMessage =
+      (data && (data.message || data.error || JSON.stringify(data))) ||
+      responseText ||
+      `HTTP ${response.status}`;
+    console.error("[Yoco] Checkout creation failed:", errorMessage);
+    throw new Error(`Yoco checkout creation failed: ${errorMessage}`);
+  }
 
   console.log("[Yoco] Checkout response:", JSON.stringify(data));
 

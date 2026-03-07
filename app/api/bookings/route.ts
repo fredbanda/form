@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/db";
-import {
-  calculatePricing,
-  type Extra,
-  EXTRA_PERSON_PRICE,
-  formatZAR,
-} from "@/lib/pricing";
+import { calculatePricing, type Extra } from "@/lib/pricing";
 import { createYocoCheckout } from "@/lib/yoco";
 
 export async function POST(request: Request) {
@@ -135,10 +130,11 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Booking creation error:", error);
-    return NextResponse.json(
-      { error: "Failed to create booking" },
-      { status: 500 }
-    );
+
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to create booking";
+
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 
