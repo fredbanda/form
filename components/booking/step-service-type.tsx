@@ -157,9 +157,9 @@ export function StepServiceType({ state, update, onNext }: Props) {
         </div>
       </div>
 
-      <h3 className="mb-4 bold text-lg text-foreground">
+      <p className="mb-4 bold text-foreground">
         Dear valued client, please complete the booking form below.
-      </h3>
+      </p>
       {/* Service Type Selection */}
       <div className="flex flex-col gap-3 mb-8">
         {(Object.keys(serviceTypeLabels) as ServiceType[]).map((type) => {
