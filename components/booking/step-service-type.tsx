@@ -75,6 +75,8 @@ export function StepServiceType({ state, update, onNext }: Props) {
       const basicFieldsValid =
         state.customerName.trim().length > 0 &&
         state.customerPhone.trim().length > 0 &&
+        state.customerEmail.trim().length > 0 &&
+        state.customerEmail.includes("@") &&
         state.flightNumber.trim().length > 0 &&
         state.arrivalTime.trim().length > 0 &&
         state.arrivalDate.trim().length > 0 &&
@@ -96,6 +98,8 @@ export function StepServiceType({ state, update, onNext }: Props) {
       return (
         state.customerName.trim().length > 0 &&
         state.customerPhone.trim().length > 0 &&
+        state.customerEmail.trim().length > 0 &&
+        state.customerEmail.includes("@") &&
         state.roomNumber.trim().length > 0 &&
         state.pickupDate.trim().length > 0 &&
         state.transferTime.trim().length > 0 &&
@@ -238,6 +242,25 @@ export function StepServiceType({ state, update, onNext }: Props) {
             value={state.customerPhone}
             onChange={(value) => update({ customerPhone: value })}
           />
+
+          {/* Email */}
+          <div className="flex flex-col gap-1">
+            <Label
+              htmlFor="email"
+              className="text-sm font-medium text-foreground"
+            >
+              Email *
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="Email address"
+              value={state.customerEmail}
+              onChange={(e) => update({ customerEmail: e.target.value })}
+              className="h-12 rounded-lg"
+            />
+          </div>
+
           {/* Flight Number */}
           <div className="flex flex-col gap-1">
             <Label
@@ -303,7 +326,7 @@ export function StepServiceType({ state, update, onNext }: Props) {
                   <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
                     <p className="text-sm text-red-800">
                       <strong>Late Night (After 22:00):</strong> R160 for first
-                      passenger + R60 for additional + R150 late night
+                      passenger + R50 for additional + R150 late night
                       surcharge.
                     </p>
                   </div>
@@ -459,6 +482,24 @@ export function StepServiceType({ state, update, onNext }: Props) {
             onChange={(value) => update({ customerPhone: value })}
           />
 
+          {/* Email */}
+          <div className="flex flex-col gap-1">
+            <Label
+              htmlFor="email-lodge"
+              className="text-sm font-medium text-foreground"
+            >
+              Email *
+            </Label>
+            <Input
+              id="email-lodge"
+              type="email"
+              placeholder="Email address"
+              value={state.customerEmail}
+              onChange={(e) => update({ customerEmail: e.target.value })}
+              className="h-12 rounded-lg"
+            />
+          </div>
+
           {/* Room Number */}
           <div className="flex flex-col gap-1">
             <Label
@@ -513,18 +554,82 @@ export function StepServiceType({ state, update, onNext }: Props) {
             {/* Time-based notification */}
             {state.transferTime && (
               <div className="mt-2">
-                <div className="mt-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
-                  <p className="text-sm text-blue-800 font-medium">
-                    <strong>Lodge to Airport Transfers Rate:</strong> R160 for
-                    first passenger, R60 for additional passengers. Please meet
-                    the driver at reception at your requested time.
-                  </p>
-                </div>
+                {(() => {
+                  const [hours, minutes] = state.transferTime.split(":").map(Number);
+                  const totalMinutes = hours * 60 + minutes;
+                  
+                  // 3am to 6am: Early morning rate
+                  if (totalMinutes >= 180 && totalMinutes < 360) {
+                    return (
+                      <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                        <p className="text-sm text-orange-800">
+                          <strong>Early Morning Rate (3am - 6am):</strong> R160 for first passenger, R50 for additional passengers.
+                        </p>
+                      </div>
+                    );
+                  }
+                  // 6am to 17h00: Regular morning rate
+                  else if (totalMinutes >= 360 && totalMinutes <= 1020) {
+                    return (
+                      <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <p className="text-sm text-green-800">
+                          <strong>Morning Rate (6am - 17h00):</strong> R110 for first passenger, R50 for additional passengers.
+                        </p>
+                      </div>
+                    );
+                  }
+                  // Outside operating hours
+                  else {
+                    return (
+                      <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                        <p className="text-sm text-orange-800">
+                          <strong>Early Morning Rate:</strong> R160 for first passenger, R50 for additional passengers.
+                        </p>
+                      </div>
+                    );
+                  }
+                })()}
               </div>
             )}
           </div>
 
-          {/* Note for Lodge to Airport */}
+          {/* Amount of Passengers */}
+          <div className="flex flex-col gap-1">
+            <Label
+              htmlFor="passengers"
+              className="text-sm font-medium text-foreground"
+            >
+              Amount of Passengers *
+            </Label>
+            <div className="flex items-center justify-center gap-4 rounded-xl border-2 border-border bg-card p-4">
+              <button
+                type="button"
+                onClick={() => {
+                  const newValue = Math.max(1, state.totalPassengers - 1);
+                  update({ totalPassengers: newValue });
+                }}
+                disabled={state.totalPassengers === 1}
+                className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-border bg-card text-foreground transition-all duration-200 hover:bg-muted active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation select-none"
+                aria-label="Remove person"
+              >
+                <Minus className="h-4 w-4" />
+              </button>
+              <span className="min-w-[3rem] text-center text-xl font-bold text-foreground">
+                {state.totalPassengers}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  const newValue = Math.min(20, state.totalPassengers + 1);
+                  update({ totalPassengers: newValue });
+                }}
+                className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-border bg-card text-foreground transition-all duration-200 hover:bg-muted active:scale-95 touch-manipulation select-none"
+                aria-label="Add person"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

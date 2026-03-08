@@ -58,7 +58,7 @@ export const initialBookingState: BookingState = {
 export const STEP_TITLES = [
   "Choose Service",
   "Extras",
-  "Your details",
+  "Additional details (Optional)",
   "Confirm your booking",
 ];
 

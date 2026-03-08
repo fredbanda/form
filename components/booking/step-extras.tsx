@@ -98,6 +98,7 @@ export function StepExtras({ state, update }: Props) {
     if (!dualPricing) {
       if (state.serviceType === "from_lodge") {
         pricing = calculateLodgeToAirportPricing(
+          state.transferTime,
           totalPassengers,
           state.selectedExtras
         );
@@ -117,6 +118,7 @@ export function StepExtras({ state, update }: Props) {
     // Calculate single transfer pricing
     if (state.serviceType === "from_lodge") {
       pricing = calculateLodgeToAirportPricing(
+        state.transferTime,
         totalPassengers,
         state.selectedExtras
       );
@@ -233,9 +235,9 @@ export function StepExtras({ state, update }: Props) {
                         </p>
                         <p className="text-xs text-blue-600">
                           {dualPricing.firstTransfer.category === "evening" &&
-                            "Evening rate"}
+                            "Early Morning Rate"}
                           {dualPricing.firstTransfer.category === "night" &&
-                            "Night rate"}
+                            "Early Morning Rate"}
                           {dualPricing.firstTransfer.category ===
                             "late-night" && "Late night"}
                         </p>
@@ -265,7 +267,7 @@ export function StepExtras({ state, update }: Props) {
                           {dualPricing.secondTransfer.category === "evening" &&
                             "Evening rate"}
                           {dualPricing.secondTransfer.category === "night" &&
-                            "Night rate"}
+                            "Early Morning Rate"}
                           {dualPricing.secondTransfer.category ===
                             "late-night" && "Late night"}
                         </p>
@@ -404,4 +406,6 @@ export function StepExtras({ state, update }: Props) {
     </div>
   );
 }
+
+
 

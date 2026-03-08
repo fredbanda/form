@@ -16,36 +16,40 @@ interface Props {
 export function StepCustomerDetails({ state, update }: Props) {
   return (
     <div className="flex flex-col">
-  {/* Image Header */}
-  <div className="relative w-full h-48 mb-6 overflow-hidden rounded-2xl">
-    
-    {/* Background Image */}
-    <Image
-      src={HeaderImage}
-      alt="Table Mountain"
-      fill
-      priority
-      className="object-cover"
-    />
+      {/* Image Header */}
+      <div className="relative w-full h-48 mb-6 overflow-hidden rounded-2xl">
+        {/* Background Image */}
+        <Image
+          src={HeaderImage}
+          alt="Table Mountain"
+          fill
+          priority
+          className="object-cover"
+        />
 
-    {/* Dark overlay */}
-    <div className="absolute inset-0 bg-black/30" />
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/30" />
 
-    {/* Logo in bottom-left corner */}
-    <div className="absolute bottom-4 left-4 z-10">
-      <Image
-        src={ExecutiveLogo}
-        alt="Executive Tours"
-        width={80}
-        height={40}
-        className="object-contain rounded-full"
-      />
-    </div>
-  </div>
+        {/* Logo in bottom-left corner */}
+        <div className="absolute bottom-4 left-4 z-10">
+          <Image
+            src={ExecutiveLogo}
+            alt="Executive Tours"
+            width={80}
+            height={40}
+            className="object-contain rounded-full"
+          />
+        </div>
+      </div>
 
       <h1 className="mb-2 text-2xl font-semibold text-foreground text-balance">
-        {"Additional details"}
+        {"Additional details (Optional)"}
       </h1>
+
+      <p className="mb-6 text-sm text-muted-foreground">
+        These details are completely optional. You can skip this step and
+        proceed to confirm your booking.
+      </p>
 
       <div className="flex flex-col gap-1">
         <Label htmlFor="alt-phone" className="sr-only">
@@ -61,19 +65,6 @@ export function StepCustomerDetails({ state, update }: Props) {
         />
       </div>
 
-      <div className="flex flex-col gap-1">
-        <Label htmlFor="email" className="sr-only">
-          Email
-        </Label>
-        <Input
-          id="email"
-          type="email"
-          placeholder="Email"
-          value={state.customerEmail}
-          onChange={(e) => update({ customerEmail: e.target.value })}
-          className="h-12 rounded-lg"
-        />
-      </div>
       <p className="text-xs leading-relaxed text-muted-foreground">
         By proceeding, you consent to get calls, WhatsApp or SMS messages,
         including by automated means, from Executive Tours & Transfers and its

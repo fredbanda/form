@@ -62,6 +62,7 @@ export function StepConfirmation({ state, update }: Props) {
     if (!dualPricing) {
       if (state.serviceType === "from_lodge") {
         pricing = calculateLodgeToAirportPricing(
+          state.transferTime,
           state.totalPassengers,
           state.selectedExtras
         );
@@ -79,6 +80,7 @@ export function StepConfirmation({ state, update }: Props) {
     // Calculate single transfer pricing
     if (state.serviceType === "from_lodge") {
       pricing = calculateLodgeToAirportPricing(
+        state.transferTime,
         state.totalPassengers,
         state.selectedExtras
       );
@@ -223,9 +225,9 @@ export function StepConfirmation({ state, update }: Props) {
               : ""}
           </span>
           <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-            {pricing?.category === "night" && "Night rate"}
+            {pricing?.category === "night" && "Early Morning Rate"}
             {pricing?.category === "late-night" && "Late night"}
-            {pricing?.category === "evening" && "Evening rate"}
+            {pricing?.category === "evening" && "Early Morning Rate"}
             {pricing?.category === "day" && "Day rate"}
           </span>
         </div>
@@ -622,4 +624,6 @@ export function StepConfirmation({ state, update }: Props) {
     </div>
   );
 }
+
+
 

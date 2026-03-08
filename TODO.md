@@ -4,6 +4,12 @@
 - [x] Updated booking creation to set payment_status as 'paid' instead of 'pending' since all bookings are actually paid.
 - [x] Created and ran migration script to update all existing pending bookings to paid status (55 bookings updated).
 - [x] Admin dashboard now correctly shows all bookings as paid status.
+- [x] **IMPROVED USER EXPERIENCE**: Made customer details step (Step 2) optional:
+  - Moved email collection from Step 2 to Step 0 (alongside name and phone)
+  - Step 2 now only collects optional alternative phone number
+  - Added Skip/Continue options on Step 2 - users can skip and go directly to confirmation
+  - Updated step title to "Additional details (Optional)" to clarify it's skippable
+  - Users can now complete booking flow with minimal required info
 - [ ] Run thorough backend/API tests (happy path, error path, edge cases).
 - [ ] Run thorough UI flow tests for booking -> checkout redirect.
 - [ ] Validate success/cancel/failure return URL behavior.

@@ -6,7 +6,7 @@ export interface Extra {
 
 // Time-based pricing in cents
 export const PRICING_EVENING_BASE = 16000; // R160 for first person (17:01 - 06:00)
-export const PRICING_EVENING_ADDITIONAL = 6000; // R60 for additional person (17:01 - 06:00)
+export const PRICING_EVENING_ADDITIONAL = 5000; // R60 for additional person (17:01 - 06:00)
 
 export const PRICING_NIGHT_BASE = 25000; // R250 per person (17:00 - 22:00)
 export const PRICING_NIGHT_ADDITIONAL = 5000; // R50 for additional person (17:00 - 22:00)
@@ -129,23 +129,77 @@ export function calculatePricing(
   };
 }
 
-// Calculate pricing for lodge to airport transfers (always morning rate - no late fee)
+// Lodge to Airport pricing constants
+export const LODGE_EARLY_MORNING_BASE = 16000; // R160 for first person (3am - 6am)
+export const LODGE_MORNING_BASE = 11000; // R110 for first person (6am - 17h00)
+export const LODGE_ADDITIONAL = 5000; // R50 for additional person (both time periods)
+
+// Calculate pricing for lodge to airport transfers with time-based rates
 export function calculateLodgeToAirportPricing(
+  transferTime: string,
   totalPassengers: number,
   selectedExtras: Extra[]
 ) {
-  // Lodge to airport is always morning pricing (17:01 - 06:00) since hotels checkout before 10:00
-  const basePrice = PRICING_EVENING_BASE; // R160 for first person
-  const additionalPersonPrice = PRICING_EVENING_ADDITIONAL; // R60 for additional
-
-  let subtotal =
-    basePrice + Math.max(0, totalPassengers - 1) * additionalPersonPrice;
+  if (!transferTime || typeof transferTime !== 'string') {
+    // Default to early morning rate if no time provided
+    const basePrice = LODGE_EARLY_MORNING_BASE;
+    const additionalPersonPrice = LODGE_ADDITIONAL;
+    let subtotal = basePrice + Math.max(0, totalPassengers - 1) * additionalPersonPrice;
+    
+    let extrasTotal = 0;
+    if (Array.isArray(selectedExtras)) {
+      for (const extra of selectedExtras) {
+        extrasTotal += extra.price;
+        subtotal += extra.price;
+      }
+    }
+    
+    return {
+      basePrice,
+      additionalPersonPrice,
+      lateNightSurcharge: 0,
+      extraPeopleTotal: Math.max(0, totalPassengers - 1) * additionalPersonPrice,
+      extrasTotal,
+      subtotal,
+      vatAmount: 0,
+      total: subtotal,
+      category: "early-morning",
+      bookingAvailable: true,
+    };
+  }
+  
+  const [hours, minutes] = transferTime.split(":").map(Number);
+  const totalMinutes = hours * 60 + minutes;
+  
+  let basePrice: number;
+  let category: string;
+  
+  // 3am to 6am: Early morning rate (R160 + R50 additional)
+  if (totalMinutes >= 180 && totalMinutes < 360) {
+    basePrice = LODGE_EARLY_MORNING_BASE;
+    category = "early-morning";
+  }
+  // 6am to 17h00: Regular morning rate (R110 + R50 additional)
+  else if (totalMinutes >= 360 && totalMinutes <= 1020) {
+    basePrice = LODGE_MORNING_BASE;
+    category = "morning";
+  }
+  // Outside operating hours - fallback to early morning rate
+  else {
+    basePrice = LODGE_EARLY_MORNING_BASE;
+    category = "early-morning";
+  }
+  
+  const additionalPersonPrice = LODGE_ADDITIONAL;
+  let subtotal = basePrice + Math.max(0, totalPassengers - 1) * additionalPersonPrice;
 
   // Add extras
   let extrasTotal = 0;
-  for (const extra of selectedExtras) {
-    extrasTotal += extra.price;
-    subtotal += extra.price;
+  if (Array.isArray(selectedExtras)) {
+    for (const extra of selectedExtras) {
+      extrasTotal += extra.price;
+      subtotal += extra.price;
+    }
   }
 
   const vatAmount = 0; // VAT is 0 for now
@@ -160,7 +214,7 @@ export function calculateLodgeToAirportPricing(
     subtotal,
     vatAmount,
     total,
-    category: "evening" as const, // Always treat as evening (morning rate)
+    category,
     bookingAvailable: true,
   };
 }
@@ -186,8 +240,9 @@ export function calculateDualTransferPricing(
   // Calculate first transfer: Airport → Lodge
   const firstTransfer = calculatePricing(arrivalTime, arrivalPassengers, []);
 
-  // Calculate second transfer: Lodge → Airport (always morning pricing)
+  // Calculate second transfer: Lodge → Airport (time-based pricing)
   const secondTransfer = calculateLodgeToAirportPricing(
+    nextMorningTime,
     nextMorningPassengers,
     []
   );
