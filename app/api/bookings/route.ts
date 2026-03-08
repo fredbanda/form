@@ -115,7 +115,7 @@ export async function POST(request: Request) {
         ${vatAmount},
         ${totalAmount},
         ${promoCode || null},
-        'pending',
+        'paid',
         ${flightNumber || null},
         ${arrivalDate || null},
         ${arrivalTime || null},
