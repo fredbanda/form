@@ -7,7 +7,8 @@ export interface BookingState {
   pickupDate: string;
   pickupHour: string;
   pickupMinute: string;
-  extraPeople: number;
+  totalPassengers: number; // Main passenger count for all services
+  extraPeople: number; // Additional people beyond first person
   selectedExtras: Extra[];
   specialRequests: string;
   customerName: string;
@@ -19,14 +20,12 @@ export interface BookingState {
   flightNumber: string;
   arrivalDate: string;
   arrivalTime: string;
-  numberOfPassengers: number;
   requireNextMorningTransfer: boolean;
   nextMorningTransferTime: string;
   nextMorningPassengers: number;
   // Lodge to Airport specific fields
   roomNumber: string;
   transferTime: string;
-  transferPassengers: number;
 }
 
 export const initialBookingState: BookingState = {
@@ -35,6 +34,7 @@ export const initialBookingState: BookingState = {
   pickupDate: "",
   pickupHour: "",
   pickupMinute: "",
+  totalPassengers: 1,
   extraPeople: 0,
   selectedExtras: [],
   specialRequests: "",
@@ -47,14 +47,12 @@ export const initialBookingState: BookingState = {
   flightNumber: "",
   arrivalDate: "",
   arrivalTime: "",
-  numberOfPassengers: 1,
   requireNextMorningTransfer: false,
   nextMorningTransferTime: "",
   nextMorningPassengers: 1,
   // Lodge to Airport specific fields
   roomNumber: "",
   transferTime: "",
-  transferPassengers: 1,
 };
 
 export const STEP_TITLES = [

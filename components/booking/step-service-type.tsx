@@ -72,7 +72,7 @@ export function StepServiceType({ state, update, onNext }: Props) {
         state.flightNumber.trim().length > 0 &&
         state.arrivalTime.trim().length > 0 &&
         state.arrivalDate.trim().length > 0 &&
-        state.numberOfPassengers > 0;
+        state.totalPassengers > 0;
 
       const nextMorningValid =
         !state.requireNextMorningTransfer ||
@@ -93,7 +93,7 @@ export function StepServiceType({ state, update, onNext }: Props) {
         state.roomNumber.trim().length > 0 &&
         state.pickupDate.trim().length > 0 &&
         state.transferTime.trim().length > 0 &&
-        state.transferPassengers > 0 &&
+        state.totalPassengers > 0 &&
         isBookingAvailable(state.transferTime)
       );
     }
@@ -323,28 +323,6 @@ export function StepServiceType({ state, update, onNext }: Props) {
             />
           </div>
 
-          {/* Number of Passengers */}
-          <div className="flex flex-col gap-1">
-            <Label
-              htmlFor="passengers"
-              className="text-sm font-medium text-foreground"
-            >
-              Number of Passengers *
-            </Label>
-            <Input
-              id="passengers"
-              type="number"
-              min="1"
-              max="20"
-              placeholder="Number of passengers"
-              value={state.numberOfPassengers}
-              onChange={(e) =>
-                update({ numberOfPassengers: parseInt(e.target.value) || 1 })
-              }
-              className="h-12 rounded-lg"
-            />
-          </div>
-
           {/* Next Morning Transfer Checkbox */}
           <div className="flex items-start space-x-2 mt-2">
             <Checkbox
@@ -546,33 +524,12 @@ export function StepServiceType({ state, update, onNext }: Props) {
             )}
           </div>
 
-          {/* Amount of Passengers */}
-          <div className="flex flex-col gap-1">
-            <Label
-              htmlFor="transfer-passengers"
-              className="text-sm font-medium text-foreground"
-            >
-              Amount of Passengers *
-            </Label>
-            <Input
-              id="transfer-passengers"
-              type="number"
-              min="1"
-              max="20"
-              placeholder="Number of passengers"
-              value={state.transferPassengers}
-              onChange={(e) =>
-                update({ transferPassengers: parseInt(e.target.value) || 1 })
-              }
-              className="h-12 rounded-lg"
-            />
-          </div>
-
           {/* Note for Lodge to Airport */}
           <div className="mt-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
             <p className="text-sm text-blue-800 font-medium">
               <strong>NB:</strong> Please meet the driver at the reception at
-              the time you requested your transfer.
+              the time you requested your transfer. Lodge to airport transfers
+              are priced at our standard morning rate.
             </p>
           </div>
         </div>
@@ -611,6 +568,4 @@ export function StepServiceType({ state, update, onNext }: Props) {
     </div>
   );
 }
-
-
 

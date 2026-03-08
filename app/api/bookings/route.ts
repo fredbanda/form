@@ -28,13 +28,12 @@ export async function POST(request: Request) {
       flightNumber,
       arrivalDate,
       arrivalTime,
-      numberOfPassengers,
+      totalPassengers,
       requireNextMorningTransfer,
       nextMorningTransferTime,
       nextMorningPassengers,
       roomNumber,
       transferTime,
-      transferPassengers,
     } = body;
 
     console.log("[DEBUG] Parsed data:", {
@@ -56,7 +55,7 @@ export async function POST(request: Request) {
       !customerName ||
       !customerPhone ||
       !customerEmail ||
-      typeof totalAmount !== 'number' ||
+      typeof totalAmount !== "number" ||
       totalAmount <= 0
     ) {
       return NextResponse.json(
@@ -70,7 +69,7 @@ export async function POST(request: Request) {
     console.log("[DEBUG] Using validated amounts from frontend:", {
       subtotal,
       vatAmount,
-      totalAmount
+      totalAmount,
     });
 
     // Create booking in database with all fields
@@ -120,13 +119,13 @@ export async function POST(request: Request) {
         ${flightNumber || null},
         ${arrivalDate || null},
         ${arrivalTime || null},
-        ${numberOfPassengers || null},
+        ${serviceType === "from_airport" ? totalPassengers : null},
         ${requireNextMorningTransfer || false},
         ${nextMorningTransferTime || null},
         ${nextMorningPassengers || null},
         ${roomNumber || null},
         ${transferTime || null},
-        ${transferPassengers || null}
+        ${serviceType === "from_lodge" ? totalPassengers : null}
       )
       RETURNING id
     `;

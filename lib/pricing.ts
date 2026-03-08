@@ -129,6 +129,42 @@ export function calculatePricing(
   };
 }
 
+// Calculate pricing for lodge to airport transfers (always morning rate - no late fee)
+export function calculateLodgeToAirportPricing(
+  totalPassengers: number,
+  selectedExtras: Extra[]
+) {
+  // Lodge to airport is always morning pricing (17:01 - 06:00) since hotels checkout before 10:00
+  const basePrice = PRICING_EVENING_BASE; // R160 for first person
+  const additionalPersonPrice = PRICING_EVENING_ADDITIONAL; // R60 for additional
+
+  let subtotal =
+    basePrice + Math.max(0, totalPassengers - 1) * additionalPersonPrice;
+
+  // Add extras
+  let extrasTotal = 0;
+  for (const extra of selectedExtras) {
+    extrasTotal += extra.price;
+    subtotal += extra.price;
+  }
+
+  const vatAmount = 0; // VAT is 0 for now
+  const total = subtotal + vatAmount;
+
+  return {
+    basePrice,
+    additionalPersonPrice,
+    lateNightSurcharge: 0, // Never applies for lodge to airport
+    extraPeopleTotal: Math.max(0, totalPassengers - 1) * additionalPersonPrice,
+    extrasTotal,
+    subtotal,
+    vatAmount,
+    total,
+    category: "evening" as const, // Always treat as evening (morning rate)
+    bookingAvailable: true,
+  };
+}
+
 // New function for calculating dual transfer pricing (Airport → Lodge + Lodge → Airport)
 export function calculateDualTransferPricing(
   arrivalTime: string,
@@ -150,9 +186,8 @@ export function calculateDualTransferPricing(
   // Calculate first transfer: Airport → Lodge
   const firstTransfer = calculatePricing(arrivalTime, arrivalPassengers, []);
 
-  // Calculate second transfer: Lodge → Airport
-  const secondTransfer = calculatePricing(
-    nextMorningTime,
+  // Calculate second transfer: Lodge → Airport (always morning pricing)
+  const secondTransfer = calculateLodgeToAirportPricing(
     nextMorningPassengers,
     []
   );
@@ -175,7 +210,7 @@ export function calculateDualTransferPricing(
     },
     secondTransfer: {
       ...secondTransfer,
-      description: `Lodge → Airport (${nextMorningTime})`,
+      description: `Lodge → Airport (Morning Rate)`,
     },
     extrasTotal,
     combinedSubtotal,

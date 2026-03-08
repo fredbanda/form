@@ -5,6 +5,7 @@ import {
   formatZAR,
   calculatePricing,
   calculateDualTransferPricing,
+  calculateLodgeToAirportPricing,
   getTimeCategory,
   type Extra,
 } from "@/lib/pricing";
@@ -34,12 +35,20 @@ export function StepExtras({ state, update }: Props) {
   };
 
   const incrementPeople = () => {
-    update({ extraPeople: state.extraPeople + 1 });
+    const newTotalPassengers = state.totalPassengers + 1;
+    update({
+      totalPassengers: newTotalPassengers,
+      extraPeople: newTotalPassengers - 1,
+    });
   };
 
   const decrementPeople = () => {
-    if (state.extraPeople > 0) {
-      update({ extraPeople: state.extraPeople - 1 });
+    if (state.totalPassengers > 1) {
+      const newTotalPassengers = state.totalPassengers - 1;
+      update({
+        totalPassengers: newTotalPassengers,
+        extraPeople: newTotalPassengers - 1,
+      });
     }
   };
 
@@ -49,10 +58,7 @@ export function StepExtras({ state, update }: Props) {
       ? state.arrivalTime
       : state.transferTime || "00:00";
 
-  const totalPassengers =
-    state.serviceType === "from_airport"
-      ? state.numberOfPassengers
-      : state.transferPassengers || 1;
+  const totalPassengers = state.totalPassengers;
 
   // Check if this is a dual transfer (Airport → Lodge + Lodge → Airport next morning)
   const isDualTransfer =
@@ -68,7 +74,7 @@ export function StepExtras({ state, update }: Props) {
     // Calculate dual transfer pricing
     dualPricing = calculateDualTransferPricing(
       state.arrivalTime,
-      state.numberOfPassengers,
+      totalPassengers,
       state.nextMorningTransferTime,
       state.nextMorningPassengers,
       state.selectedExtras
@@ -76,11 +82,18 @@ export function StepExtras({ state, update }: Props) {
 
     // If dual pricing calculation failed, fall back to single pricing
     if (!dualPricing) {
-      pricing = calculatePricing(
-        relevantTime,
-        totalPassengers,
-        state.selectedExtras
-      );
+      if (state.serviceType === "from_lodge") {
+        pricing = calculateLodgeToAirportPricing(
+          totalPassengers,
+          state.selectedExtras
+        );
+      } else {
+        pricing = calculatePricing(
+          relevantTime,
+          totalPassengers,
+          state.selectedExtras
+        );
+      }
       timeCategory = getTimeCategory(relevantTime);
     } else {
       pricing = null; // We'll use dualPricing instead
@@ -88,47 +101,98 @@ export function StepExtras({ state, update }: Props) {
     }
   } else {
     // Calculate single transfer pricing
-    pricing = calculatePricing(
-      relevantTime,
-      totalPassengers,
-      state.selectedExtras
-    );
-    timeCategory = getTimeCategory(relevantTime);
+    if (state.serviceType === "from_lodge") {
+      pricing = calculateLodgeToAirportPricing(
+        totalPassengers,
+        state.selectedExtras
+      );
+      timeCategory = "evening"; // Always evening rate for lodge to airport
+    } else {
+      pricing = calculatePricing(
+        relevantTime,
+        totalPassengers,
+        state.selectedExtras
+      );
+      timeCategory = getTimeCategory(relevantTime);
+    }
     dualPricing = null;
   }
 
   return (
-  <div className="flex flex-col">
-  {/* Image Header */}
-  <div className="relative w-full h-48 mb-6 overflow-hidden rounded-2xl">
-    
-    {/* Background Image */}
-    <Image
-      src={Carpet}
-      alt="Table Mountain"
-      fill
-      priority
-      className="object-cover"
-    />
+    <div className="flex flex-col">
+      {/* Image Header */}
+      <div className="relative w-full h-48 mb-6 overflow-hidden rounded-2xl">
+        {/* Background Image */}
+        <Image
+          src={Carpet}
+          alt="Table Mountain"
+          fill
+          priority
+          className="object-cover"
+        />
 
-    {/* Dark overlay */}
-    <div className="absolute inset-0 bg-black/30" />
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/30" />
 
-    {/* Logo in bottom-left corner */}
-    <div className="absolute bottom-4 left-4 z-10">
-      <Image
-        src={ExecutiveLogo}
-        alt="Executive Tours"
-        width={80}
-        height={40}
-        className="object-contain rounded-full"
-      />
-    </div>
-
-  </div>
-
+        {/* Logo in bottom-left corner */}
+        <div className="absolute bottom-4 left-4 z-10">
+          <Image
+            src={ExecutiveLogo}
+            alt="Executive Tours"
+            width={80}
+            height={40}
+            className="object-contain rounded-full"
+          />
+        </div>
+      </div>
 
       <div className="flex flex-col gap-6">
+        {/* Passenger Selection Section */}
+        <div>
+          <h2 className="mb-3 text-lg font-semibold text-foreground">
+            Number of Passengers
+          </h2>
+
+          <div className="flex items-center justify-between rounded-xl border-2 border-border bg-card p-4">
+            <div className="flex items-center gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                <Users className="h-5 w-5" />
+              </span>
+              <div>
+                <p className="font-semibold text-foreground">
+                  Total Passengers
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Including yourself
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={decrementPeople}
+                disabled={state.totalPassengers === 1}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Remove person"
+              >
+                <Minus className="h-4 w-4" />
+              </button>
+              <span className="w-8 text-center text-lg font-semibold text-foreground">
+                {state.totalPassengers}
+              </span>
+              <button
+                type="button"
+                onClick={incrementPeople}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:bg-muted"
+                aria-label="Add person"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Pricing Breakdown Section */}
         <div>
           <h2 className="mb-3 text-lg font-semibold text-foreground">
@@ -151,7 +215,7 @@ export function StepExtras({ state, update }: Props) {
                       </span>
                       <div>
                         <p className="text-sm font-medium text-blue-800">
-                          {state.numberOfPassengers} passengers
+                          {totalPassengers} passengers
                         </p>
                         <p className="text-xs text-blue-600">
                           {dualPricing.firstTransfer.category === "evening" &&
@@ -320,49 +384,6 @@ export function StepExtras({ state, update }: Props) {
                 )}
               </>
             )}
-
-            {/* Extra People - Always shown for both single and dual transfers */}
-            <div className="flex items-center justify-between rounded-xl border-2 border-border bg-card p-4">
-              <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                  <Users className="h-5 w-5" />
-                </span>
-                <div>
-                  <p className="font-semibold text-foreground">Extra People</p>
-                  <p className="text-sm text-muted-foreground">
-                    {formatZAR(
-                      pricing?.additionalPersonPrice ||
-                        dualPricing?.firstTransfer.additionalPersonPrice ||
-                        0
-                    )}{" "}
-                    per person
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={decrementPeople}
-                  disabled={state.extraPeople === 0}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
-                  aria-label="Remove person"
-                >
-                  <Minus className="h-4 w-4" />
-                </button>
-                <span className="w-6 text-center text-lg font-semibold text-foreground">
-                  {state.extraPeople}
-                </span>
-                <button
-                  type="button"
-                  onClick={incrementPeople}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:bg-muted"
-                  aria-label="Add person"
-                >
-                  <Plus className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       </div>

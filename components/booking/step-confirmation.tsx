@@ -19,6 +19,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   calculatePricing,
   calculateDualTransferPricing,
+  calculateLodgeToAirportPricing,
   formatZAR,
 } from "@/lib/pricing";
 import { serviceTypeLabels } from "@/lib/validators";
@@ -51,7 +52,7 @@ export function StepConfirmation({ state, update }: Props) {
     // Calculate dual transfer pricing
     dualPricing = calculateDualTransferPricing(
       state.arrivalTime,
-      state.numberOfPassengers,
+      state.totalPassengers,
       state.nextMorningTransferTime,
       state.nextMorningPassengers,
       state.selectedExtras
@@ -59,25 +60,37 @@ export function StepConfirmation({ state, update }: Props) {
 
     // If dual pricing calculation failed, fall back to single pricing
     if (!dualPricing) {
-      pricing = calculatePricing(
-        state.arrivalTime,
-        state.numberOfPassengers,
-        state.selectedExtras
-      );
+      if (state.serviceType === "from_lodge") {
+        pricing = calculateLodgeToAirportPricing(
+          state.totalPassengers,
+          state.selectedExtras
+        );
+      } else {
+        pricing = calculatePricing(
+          state.arrivalTime,
+          state.totalPassengers,
+          state.selectedExtras
+        );
+      }
     } else {
       pricing = null; // We'll use dualPricing instead
     }
   } else {
     // Calculate single transfer pricing
-    pricing = calculatePricing(
-      state.serviceType === "from_airport"
-        ? state.arrivalTime
-        : state.transferTime || "00:00",
-      state.serviceType === "from_airport"
-        ? state.numberOfPassengers
-        : state.transferPassengers || 1,
-      state.selectedExtras
-    );
+    if (state.serviceType === "from_lodge") {
+      pricing = calculateLodgeToAirportPricing(
+        state.totalPassengers,
+        state.selectedExtras
+      );
+    } else {
+      pricing = calculatePricing(
+        state.serviceType === "from_airport"
+          ? state.arrivalTime
+          : state.transferTime || "00:00",
+        state.totalPassengers,
+        state.selectedExtras
+      );
+    }
     dualPricing = null;
   }
 
@@ -118,14 +131,13 @@ export function StepConfirmation({ state, update }: Props) {
           flightNumber: state.flightNumber || null,
           arrivalDate: state.arrivalDate || null,
           arrivalTime: state.arrivalTime || null,
-          numberOfPassengers: state.numberOfPassengers,
+          totalPassengers: state.totalPassengers,
           requireNextMorningTransfer: state.requireNextMorningTransfer,
           nextMorningTransferTime: state.nextMorningTransferTime || null,
           nextMorningPassengers: state.nextMorningPassengers,
           // Lodge to Airport specific fields
           roomNumber: state.roomNumber || null,
           transferTime: state.transferTime || null,
-          transferPassengers: state.transferPassengers,
           subtotal: dualPricing
             ? dualPricing.combinedSubtotal
             : pricing?.subtotal,
@@ -162,32 +174,31 @@ export function StepConfirmation({ state, update }: Props) {
 
   return (
     <div className="flex flex-col">
-  {/* Image Header */}
-  <div className="relative w-full h-48 mb-6 overflow-hidden rounded-2xl">
-    
-    {/* Background Image */}
-    <Image
-      src={Canvas}
-      alt="Table Mountain"
-      fill
-      priority
-      className="object-cover"
-    />
+      {/* Image Header */}
+      <div className="relative w-full h-48 mb-6 overflow-hidden rounded-2xl">
+        {/* Background Image */}
+        <Image
+          src={Canvas}
+          alt="Table Mountain"
+          fill
+          priority
+          className="object-cover"
+        />
 
-    {/* Dark overlay */}
-    <div className="absolute inset-0 bg-black/30" />
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/30" />
 
-    {/* Logo in bottom-left corner */}
-    <div className="absolute bottom-4 left-4 z-10">
-      <Image
-        src={ExecutiveLogo}
-        alt="Executive Tours"
-        width={80}
-        height={40}
-        className="object-contain rounded-full"
-      />
-    </div>
-  </div>
+        {/* Logo in bottom-left corner */}
+        <div className="absolute bottom-4 left-4 z-10">
+          <Image
+            src={ExecutiveLogo}
+            alt="Executive Tours"
+            width={80}
+            height={40}
+            className="object-contain rounded-full"
+          />
+        </div>
+      </div>
 
       <h1 className="mb-6 text-2xl font-semibold text-foreground text-balance">
         Confirm your booking
@@ -259,15 +270,8 @@ export function StepConfirmation({ state, update }: Props) {
           <div className="flex items-center gap-3">
             <Users className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm text-foreground">
-              {state.serviceType === "from_airport"
-                ? `${state.numberOfPassengers} ${
-                    state.numberOfPassengers === 1 ? "passenger" : "passengers"
-                  }`
-                : state.serviceType === "from_lodge"
-                ? `${state.transferPassengers} ${
-                    state.transferPassengers === 1 ? "passenger" : "passengers"
-                  }`
-                : `${totalPeople} ${totalPeople === 1 ? "person" : "people"}`}
+              {state.totalPassengers}{" "}
+              {state.totalPassengers === 1 ? "passenger" : "passengers"}
             </span>
           </div>
         </div>
@@ -342,7 +346,7 @@ export function StepConfirmation({ state, update }: Props) {
                     Passengers:
                   </span>
                   <span className="text-sm text-foreground">
-                    {state.numberOfPassengers}
+                    {state.totalPassengers}
                   </span>
                 </div>
                 {state.requireNextMorningTransfer && (
@@ -414,7 +418,7 @@ export function StepConfirmation({ state, update }: Props) {
                     Passengers:
                   </span>
                   <span className="text-sm text-foreground">
-                    {state.transferPassengers}
+                    {state.totalPassengers}
                   </span>
                 </div>
               </>
@@ -446,7 +450,7 @@ export function StepConfirmation({ state, update }: Props) {
                 </h4>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-blue-700">
-                    {state.numberOfPassengers} passengers
+                    {state.totalPassengers} passengers
                   </span>
                   <span className="text-sm font-medium text-blue-800">
                     {formatZAR(dualPricing.firstTransfer.subtotal)}
@@ -502,13 +506,8 @@ export function StepConfirmation({ state, update }: Props) {
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-foreground">
                     Additional passengers (
-                    {Math.max(
-                      0,
-                      (state.serviceType === "from_airport"
-                        ? state.numberOfPassengers
-                        : state.transferPassengers) - 1
-                    )}{" "}
-                    × {formatZAR(pricing.additionalPersonPrice)})
+                    {Math.max(0, state.totalPassengers - 1)} ×{" "}
+                    {formatZAR(pricing.additionalPersonPrice)})
                   </span>
                   <span className="text-sm text-foreground">
                     {formatZAR(pricing.extraPeopleTotal)}
