@@ -34,15 +34,7 @@ export function StepExtras({ state, update }: Props) {
     }
   };
 
-  const handleIncrementTouch = (e: React.TouchEvent) => {
-    e.preventDefault();
-    incrementPeople();
-  };
 
-  const handleDecrementTouch = (e: React.TouchEvent) => {
-    e.preventDefault();
-    decrementPeople();
-  };
 
   const incrementPeople = () => {
     console.log(
@@ -194,7 +186,6 @@ export function StepExtras({ state, update }: Props) {
               <button
                 type="button"
                 onClick={decrementPeople}
-                onTouchEnd={handleDecrementTouch}
                 disabled={state.totalPassengers === 1}
                 className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-border bg-card text-foreground transition-all duration-200 hover:bg-muted active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation select-none"
                 aria-label="Remove person"
@@ -207,7 +198,6 @@ export function StepExtras({ state, update }: Props) {
               <button
                 type="button"
                 onClick={incrementPeople}
-                onTouchEnd={handleIncrementTouch}
                 className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-border bg-card text-foreground transition-all duration-200 hover:bg-muted active:scale-95 touch-manipulation select-none"
                 aria-label="Add person"
               >

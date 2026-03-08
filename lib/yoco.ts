@@ -17,7 +17,8 @@ export async function createYocoCheckout({
   customerEmail,
   customerName,
 }: CreateCheckoutParams) {
-  const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const rawAppUrl =
+    process.env.NEXT_PUBLIC_APP_URL || "https://executivesa.vercel.app";
   const appUrl = rawAppUrl.replace(/\/+$/, "");
 
   console.log("[Yoco] Creating simplified checkout (no line_items):", {
@@ -128,4 +129,5 @@ export function verifyYocoWebhook(
 
   return false;
 }
+
 

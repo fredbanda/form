@@ -15,10 +15,10 @@ async function checkYocoAccount() {
       body: JSON.stringify({
         amount: 5000, // R50.00
         currency: "ZAR",
-        successUrl: "https://example.com/success",
-        cancelUrl: "https://example.com/cancel", 
-        failureUrl: "https://example.com/failure",
-        metadata: { test: "account-check" }
+        successUrl: "https://executivesa.vercel.app/success",
+        cancelUrl: "https://executivesa.vercel.app/cancel",
+        failureUrl: "https://executivesa.vercel.app/failure",
+        metadata: { test: "account-check" },
       }),
     });
 
@@ -61,5 +61,8 @@ async function checkYocoAccount() {
     console.error("Error:", error);
   }
 }
+
+
+
 
 checkYocoAccount();

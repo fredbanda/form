@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { PlaneLanding, Building, MessageCircle } from "lucide-react";
+import { PlaneLanding, Building, MessageCircle, Plus, Minus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -383,20 +383,34 @@ export function StepServiceType({ state, update, onNext }: Props) {
                 >
                   Amount of Passengers *
                 </Label>
-                <Input
-                  id="next-passengers"
-                  type="number"
-                  min="1"
-                  max="20"
-                  placeholder="Number of passengers"
-                  value={state.nextMorningPassengers}
-                  onChange={(e) =>
-                    update({
-                      nextMorningPassengers: parseInt(e.target.value) || 1,
-                    })
-                  }
-                  className="h-12 rounded-lg"
-                />
+                <div className="flex items-center justify-center gap-4 rounded-xl border-2 border-border bg-card p-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newValue = Math.max(1, state.nextMorningPassengers - 1);
+                      update({ nextMorningPassengers: newValue });
+                    }}
+                    disabled={state.nextMorningPassengers === 1}
+                    className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-border bg-card text-foreground transition-all duration-200 hover:bg-muted active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation select-none"
+                    aria-label="Remove person"
+                  >
+                    <Minus className="h-4 w-4" />
+                  </button>
+                  <span className="min-w-[3rem] text-center text-xl font-bold text-foreground">
+                    {state.nextMorningPassengers}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newValue = Math.min(20, state.nextMorningPassengers + 1);
+                      update({ nextMorningPassengers: newValue });
+                    }}
+                    className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-border bg-card text-foreground transition-all duration-200 hover:bg-muted active:scale-95 touch-manipulation select-none"
+                    aria-label="Add person"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
             </div>
           )}

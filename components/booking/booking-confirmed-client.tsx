@@ -89,9 +89,12 @@ export function BookingConfirmedClient({
         </div>
 
         <p className="mt-4 text-center text-sm leading-relaxed text-muted-foreground">
-          Thank you, {customerName}. A driver will contact you before your
-          pickup. If you have questions, reach out on WhatsApp.
+          Dear {customerName} once you exit the arrival hall, please switch on
+          your wifi in order for your whatsapp to work. The driver will meet you
+          at the arrivals hall with your name reflected on a name board. Kindly
+          send us a WhatsApp when you have collected your luggage.
         </p>
+      
 
         {/* WhatsApp CTA */}
         <a
@@ -121,4 +124,6 @@ export function BookingConfirmedClient({
     </main>
   );
 }
+
+
 
