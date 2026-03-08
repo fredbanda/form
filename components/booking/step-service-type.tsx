@@ -1,7 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { PlaneLanding, Building, MessageCircle, Plus, Minus } from "lucide-react";
+import {
+  PlaneLanding,
+  Building,
+  MessageCircle,
+  Plus,
+  Minus,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -93,8 +99,8 @@ export function StepServiceType({ state, update, onNext }: Props) {
         state.roomNumber.trim().length > 0 &&
         state.pickupDate.trim().length > 0 &&
         state.transferTime.trim().length > 0 &&
-        state.totalPassengers > 0 &&
-        isBookingAvailable(state.transferTime)
+        state.totalPassengers > 0
+        // No time availability check - lodge to airport is always bookable
       );
     }
 
@@ -106,9 +112,7 @@ export function StepServiceType({ state, update, onNext }: Props) {
     if (state.serviceType === "from_airport") {
       return state.arrivalTime;
     }
-    if (state.serviceType === "from_lodge") {
-      return state.transferTime;
-    }
+    // Lodge to airport doesn't need time validation - always bookable
     return "";
   }
 
@@ -126,9 +130,12 @@ export function StepServiceType({ state, update, onNext }: Props) {
 
   const relevantTime = getRelevantTime();
   const timeCategory = relevantTime ? getTimeCategory(relevantTime) : null;
-  const bookingAvailable = relevantTime
-    ? isBookingAvailable(relevantTime)
-    : true;
+  const bookingAvailable =
+    state.serviceType === "from_lodge"
+      ? true
+      : relevantTime
+      ? isBookingAvailable(relevantTime)
+      : true;
 
   return (
     <div className="flex flex-col">
@@ -387,7 +394,10 @@ export function StepServiceType({ state, update, onNext }: Props) {
                   <button
                     type="button"
                     onClick={() => {
-                      const newValue = Math.max(1, state.nextMorningPassengers - 1);
+                      const newValue = Math.max(
+                        1,
+                        state.nextMorningPassengers - 1
+                      );
                       update({ nextMorningPassengers: newValue });
                     }}
                     disabled={state.nextMorningPassengers === 1}
@@ -402,7 +412,10 @@ export function StepServiceType({ state, update, onNext }: Props) {
                   <button
                     type="button"
                     onClick={() => {
-                      const newValue = Math.min(20, state.nextMorningPassengers + 1);
+                      const newValue = Math.min(
+                        20,
+                        state.nextMorningPassengers + 1
+                      );
                       update({ nextMorningPassengers: newValue });
                     }}
                     className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-border bg-card text-foreground transition-all duration-200 hover:bg-muted active:scale-95 touch-manipulation select-none"
@@ -500,52 +513,18 @@ export function StepServiceType({ state, update, onNext }: Props) {
             {/* Time-based notification */}
             {state.transferTime && (
               <div className="mt-2">
-                {getTimeCategory(state.transferTime) === "day" && (
-                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                    <p className="text-sm text-amber-800">
-                      <strong>Day Hours (06:00 - 17:00):</strong> Online booking
-                      is not available during these hours. Please contact us via
-                      WhatsApp for a quote.
-                    </p>
-                  </div>
-                )}
-                {getTimeCategory(state.transferTime) === "evening" && (
-                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-sm text-blue-800">
-                      <strong>Evening Rate:</strong> R160 for first passenger,
-                      R60 for additional passengers.
-                    </p>
-                  </div>
-                )}
-                {getTimeCategory(state.transferTime) === "night" && (
-                  <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
-                    <p className="text-sm text-purple-800">
-                      <strong>Night Rate (17:00 - 22:00):</strong> R250 per
-                      passenger, R50 for additional passengers.
-                    </p>
-                  </div>
-                )}
-                {getTimeCategory(state.transferTime) === "late-night" && (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-sm text-red-800">
-                      <strong>Late Night (After 22:00):</strong> R160 for first
-                      passenger + R60 for additional + R150 late night
-                      surcharge.
-                    </p>
-                  </div>
-                )}
+                <div className="mt-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+                  <p className="text-sm text-blue-800 font-medium">
+                    <strong>Lodge to Airport Transfers Rate:</strong> R160 for
+                    first passenger, R60 for additional passengers. Please meet
+                    the driver at reception at your requested time.
+                  </p>
+                </div>
               </div>
             )}
           </div>
 
           {/* Note for Lodge to Airport */}
-          <div className="mt-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
-            <p className="text-sm text-blue-800 font-medium">
-              <strong>NB:</strong> Please meet the driver at the reception at
-              the time you requested your transfer. Lodge to airport transfers
-              are priced at our standard morning rate.
-            </p>
-          </div>
         </div>
       )}
 
