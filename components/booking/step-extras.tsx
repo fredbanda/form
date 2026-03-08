@@ -34,21 +34,43 @@ export function StepExtras({ state, update }: Props) {
     }
   };
 
+  const handleIncrementTouch = (e: React.TouchEvent) => {
+    e.preventDefault();
+    incrementPeople();
+  };
+
+  const handleDecrementTouch = (e: React.TouchEvent) => {
+    e.preventDefault();
+    decrementPeople();
+  };
+
   const incrementPeople = () => {
+    console.log(
+      "Increment clicked, current totalPassengers:",
+      state.totalPassengers
+    );
     const newTotalPassengers = state.totalPassengers + 1;
     update({
       totalPassengers: newTotalPassengers,
       extraPeople: newTotalPassengers - 1,
     });
+    console.log("Updated to:", newTotalPassengers);
   };
 
   const decrementPeople = () => {
+    console.log(
+      "Decrement clicked, current totalPassengers:",
+      state.totalPassengers
+    );
     if (state.totalPassengers > 1) {
       const newTotalPassengers = state.totalPassengers - 1;
       update({
         totalPassengers: newTotalPassengers,
         extraPeople: newTotalPassengers - 1,
       });
+      console.log("Updated to:", newTotalPassengers);
+    } else {
+      console.log("Cannot decrement below 1");
     }
   };
 
@@ -153,7 +175,7 @@ export function StepExtras({ state, update }: Props) {
             Number of Passengers
           </h2>
 
-          <div className="flex items-center justify-between rounded-xl border-2 border-border bg-card p-4">
+          <div className="flex flex-col gap-4 rounded-xl border-2 border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                 <Users className="h-5 w-5" />
@@ -168,26 +190,28 @@ export function StepExtras({ state, update }: Props) {
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center gap-4 sm:justify-end">
               <button
                 type="button"
                 onClick={decrementPeople}
+                onTouchEnd={handleDecrementTouch}
                 disabled={state.totalPassengers === 1}
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-border bg-card text-foreground transition-all duration-200 hover:bg-muted active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation select-none"
                 aria-label="Remove person"
               >
-                <Minus className="h-4 w-4" />
+                <Minus className="h-5 w-5" />
               </button>
-              <span className="w-8 text-center text-lg font-semibold text-foreground">
+              <span className="min-w-[3rem] text-center text-xl font-bold text-foreground">
                 {state.totalPassengers}
               </span>
               <button
                 type="button"
                 onClick={incrementPeople}
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:bg-muted"
+                onTouchEnd={handleIncrementTouch}
+                className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-border bg-card text-foreground transition-all duration-200 hover:bg-muted active:scale-95 touch-manipulation select-none"
                 aria-label="Add person"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="h-5 w-5" />
               </button>
             </div>
           </div>
