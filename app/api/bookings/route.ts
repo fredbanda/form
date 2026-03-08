@@ -20,6 +20,21 @@ export async function POST(request: Request) {
       customerAltPhone,
       customerEmail,
       promoCode,
+      // Use validated amounts from frontend
+      subtotal,
+      vatAmount,
+      totalAmount,
+      // Additional fields for proper booking record
+      flightNumber,
+      arrivalDate,
+      arrivalTime,
+      numberOfPassengers,
+      requireNextMorningTransfer,
+      nextMorningTransferTime,
+      nextMorningPassengers,
+      roomNumber,
+      transferTime,
+      transferPassengers,
     } = body;
 
     console.log("[DEBUG] Parsed data:", {
@@ -40,19 +55,25 @@ export async function POST(request: Request) {
       !pickupTime ||
       !customerName ||
       !customerPhone ||
-      !customerEmail
+      !customerEmail ||
+      typeof totalAmount !== 'number' ||
+      totalAmount <= 0
     ) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Missing required fields or invalid amount" },
         { status: 400 }
       );
     }
 
-    // Calculate pricing
+    // Use validated amounts from frontend instead of recalculating
     const extras: Extra[] = selectedExtras || [];
-    const pricing = calculatePricing(pickupTime, extraPeople || 0, extras);
+    console.log("[DEBUG] Using validated amounts from frontend:", {
+      subtotal,
+      vatAmount,
+      totalAmount
+    });
 
-    // Create booking in database
+    // Create booking in database with all fields
     const result = await sql`
       INSERT INTO bookings (
         service_type,
@@ -69,7 +90,17 @@ export async function POST(request: Request) {
         vat_amount,
         total_amount,
         promo_code,
-        payment_status
+        payment_status,
+        flight_number,
+        arrival_date,
+        arrival_time,
+        number_of_passengers,
+        require_next_morning_transfer,
+        next_morning_transfer_time,
+        next_morning_passengers,
+        room_number,
+        transfer_time,
+        transfer_passengers
       ) VALUES (
         ${serviceType},
         ${pickupDate},
@@ -81,27 +112,37 @@ export async function POST(request: Request) {
         ${customerPhone},
         ${customerAltPhone || null},
         ${customerEmail},
-        ${pricing.subtotal},
-        ${pricing.vatAmount},
-        ${pricing.total},
+        ${subtotal},
+        ${vatAmount},
+        ${totalAmount},
         ${promoCode || null},
-        'pending'
+        'pending',
+        ${flightNumber || null},
+        ${arrivalDate || null},
+        ${arrivalTime || null},
+        ${numberOfPassengers || null},
+        ${requireNextMorningTransfer || false},
+        ${nextMorningTransferTime || null},
+        ${nextMorningPassengers || null},
+        ${roomNumber || null},
+        ${transferTime || null},
+        ${transferPassengers || null}
       )
       RETURNING id
     `;
 
     const bookingId = result[0].id;
 
-    // Create Yoco checkout (simplified - no line items to avoid API issues)
-    console.log("[DEBUG] Creating simplified Yoco checkout with:", {
-      amountInCents: pricing.total,
+    // Create Yoco checkout with validated amount from frontend
+    console.log("[DEBUG] Creating Yoco checkout with validated amount:", {
+      amountInCents: totalAmount,
       bookingId,
       customerEmail,
       customerName,
     });
 
     const checkout = await createYocoCheckout({
-      amountInCents: pricing.total,
+      amountInCents: totalAmount,
       bookingId,
       customerEmail,
       customerName,
