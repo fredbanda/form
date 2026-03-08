@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 import { sql } from "@/lib/db"
 import { verifyYocoWebhook } from "@/lib/yoco"
 import { sendConfirmationEmail, sendAdminNotificationEmail } from "@/lib/email"
+import { generateWhatsAppLink } from "@/lib/whatsapp"
+import { formatZAR } from "@/lib/pricing"
 
 export async function POST(request: Request) {
   try {
@@ -59,6 +61,28 @@ export async function POST(request: Request) {
 
         sendConfirmationEmail(emailData).catch(console.error)
         sendAdminNotificationEmail(emailData).catch(console.error)
+
+        // Send WhatsApp notification to owner
+        const ownerPhone = process.env.OWNER_WHATSAPP_NUMBER // e.g., "27796552077"
+        if (ownerPhone) {
+          const serviceLabel = booking.service_type === "from_airport" 
+            ? "Airport → Lodge" 
+            : "Lodge → Airport"
+          
+          const whatsappMessage = `🚗 NEW BOOKING ALERT\n\n` +
+            `📋 Ref: ${booking.id.slice(0, 8).toUpperCase()}\n` +
+            `👤 Customer: ${booking.customer_name}\n` +
+            `📱 Phone: ${booking.customer_phone}\n` +
+            `🚌 Service: ${serviceLabel}\n` +
+            `📅 Date: ${booking.pickup_date}\n` +
+            `⏰ Time: ${booking.pickup_time}\n` +
+            `👥 Passengers: ${(booking.extra_people ?? 0) + 1}\n` +
+            `💰 Total: ${formatZAR(booking.total_amount)}\n\n` +
+            `Click to contact customer: https://wa.me/${booking.customer_phone.replace(/\D/g, '')}`
+          
+          const ownerWhatsAppUrl = generateWhatsAppLink(ownerPhone, whatsappMessage)
+          console.log(`Owner WhatsApp notification: ${ownerWhatsAppUrl}`)
+        }
       }
     } else if (event.type === "payment.failed") {
       const checkoutId = event.payload?.metadata?.checkoutId || event.payload?.checkoutId
