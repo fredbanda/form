@@ -342,8 +342,8 @@ export function StepExtras({ state, update }: Props) {
                       <p className="text-sm text-muted-foreground">
                         {timeCategory === "evening" &&
                           "Evening rate (17:01-06:00)"}
-                        {timeCategory === "night" && "Night rate (17:00-22:00)"}
-                        {timeCategory === "late-night" && "Late night rate"}
+                        {timeCategory === "night" && "Early Morning Rate (17:00-22:00)"}
+                        {timeCategory === "late-night" && "Early Morning Rate (17:00-22:00)"}
                         {timeCategory === "day" &&
                           "Day rate (Contact for quote)"}
                       </p>

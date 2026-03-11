@@ -58,7 +58,7 @@ function BookingDetail({ booking }: { booking: Booking }) {
                 month: "short",
                 year: "numeric",
               })} at {booking.pickup_time}
-              {isNight && <Badge variant="outline" className="ml-2 text-xs">Night Rate</Badge>}
+              {isNight && <Badge variant="outline" className="ml-2 text-xs">Early Morning Rate</Badge>}
             </span>
           </div>
           <div className="flex items-center gap-2">

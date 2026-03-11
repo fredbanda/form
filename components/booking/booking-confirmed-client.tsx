@@ -56,7 +56,7 @@ export function BookingConfirmedClient({
             <p className="text-sm font-medium text-muted-foreground capitalize">
               {serviceType.replace(/_/g, " ")}
             </p>
-            {isNight && <Badge variant="outline">Night Rate</Badge>}
+            {isNight && <Badge variant="outline">Early Morning Rate</Badge>}
           </div>
 
           <div className="flex flex-col gap-3">

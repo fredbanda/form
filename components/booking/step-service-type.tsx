@@ -309,8 +309,8 @@ export function StepServiceType({ state, update, onNext }: Props) {
                 {getTimeCategory(state.arrivalTime) === "evening" && (
                   <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
                     <p className="text-sm text-blue-800">
-                      <strong>Evening Rate:</strong> R160 for first passenger,
-                      R60 for additional passengers.
+                      <strong>Evening Rate:</strong> R150 for first passenger,
+                      R50 for additional passengers.
                     </p>
                   </div>
                 )}
@@ -325,9 +325,7 @@ export function StepServiceType({ state, update, onNext }: Props) {
                 {getTimeCategory(state.arrivalTime) === "late-night" && (
                   <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
                     <p className="text-sm text-red-800">
-                      <strong>Late Night (After 22:00):</strong> R160 for first
-                      passenger + R50 for additional + R150 late night
-                      surcharge.
+                      <strong>Late night surcharge (After 22:00)</strong> 
                     </p>
                   </div>
                 )}

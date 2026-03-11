@@ -5,7 +5,7 @@ export interface Extra {
 }
 
 // Time-based pricing in cents
-export const PRICING_EVENING_BASE = 16000; // R160 for first person (17:01 - 06:00)
+export const PRICING_EVENING_BASE = 15000; // R160 for first person (17:01 - 06:00)
 export const PRICING_EVENING_ADDITIONAL = 5000; // R60 for additional person (17:01 - 06:00)
 
 export const PRICING_NIGHT_BASE = 25000; // R250 per person (17:00 - 22:00)
@@ -13,6 +13,7 @@ export const PRICING_NIGHT_ADDITIONAL = 5000; // R50 for additional person (17:0
 
 export const LATE_NIGHT_SURCHARGE = 15000; // R150 extra after 22:00
 export const VAT_RATE = 0.15;
+export const PROCESSING_FEE_RATE = 0.05; // 5% processing fee
 
 export function formatZAR(cents: number): string {
   return `ZAR ${(cents / 100).toLocaleString("en-ZA", {
@@ -78,6 +79,7 @@ export function calculatePricing(
       extraPeopleTotal: 0,
       subtotal: 0,
       vatAmount: 0,
+      processingFee: 0,
       total: 0,
       category,
       bookingAvailable: false,
@@ -113,7 +115,9 @@ export function calculatePricing(
 
   // VAT is 0 for now as shown in the screenshot, but we keep the calculation ready
   const vatAmount = 0;
-  const total = subtotal + vatAmount;
+  // Calculate 5% processing fee on subtotal
+  const processingFee = Math.round(subtotal * PROCESSING_FEE_RATE);
+  const total = subtotal + vatAmount + processingFee;
 
   return {
     basePrice,
@@ -123,6 +127,7 @@ export function calculatePricing(
     extrasTotal,
     subtotal,
     vatAmount,
+    processingFee,
     total,
     category,
     bookingAvailable: true,
@@ -130,7 +135,7 @@ export function calculatePricing(
 }
 
 // Lodge to Airport pricing constants
-export const LODGE_EARLY_MORNING_BASE = 16000; // R160 for first person (3am - 6am)
+export const LODGE_EARLY_MORNING_BASE = 15000; // R160 for first person (3am - 6am)
 export const LODGE_MORNING_BASE = 11000; // R110 for first person (6am - 17h00)
 export const LODGE_ADDITIONAL = 5000; // R50 for additional person (both time periods)
 
@@ -140,12 +145,13 @@ export function calculateLodgeToAirportPricing(
   totalPassengers: number,
   selectedExtras: Extra[]
 ) {
-  if (!transferTime || typeof transferTime !== 'string') {
+  if (!transferTime || typeof transferTime !== "string") {
     // Default to early morning rate if no time provided
     const basePrice = LODGE_EARLY_MORNING_BASE;
     const additionalPersonPrice = LODGE_ADDITIONAL;
-    let subtotal = basePrice + Math.max(0, totalPassengers - 1) * additionalPersonPrice;
-    
+    let subtotal =
+      basePrice + Math.max(0, totalPassengers - 1) * additionalPersonPrice;
+
     let extrasTotal = 0;
     if (Array.isArray(selectedExtras)) {
       for (const extra of selectedExtras) {
@@ -153,27 +159,31 @@ export function calculateLodgeToAirportPricing(
         subtotal += extra.price;
       }
     }
-    
+
+    const processingFee = Math.round(subtotal * PROCESSING_FEE_RATE);
+
     return {
       basePrice,
       additionalPersonPrice,
       lateNightSurcharge: 0,
-      extraPeopleTotal: Math.max(0, totalPassengers - 1) * additionalPersonPrice,
+      extraPeopleTotal:
+        Math.max(0, totalPassengers - 1) * additionalPersonPrice,
       extrasTotal,
       subtotal,
       vatAmount: 0,
-      total: subtotal,
+      processingFee,
+      total: subtotal + processingFee,
       category: "early-morning",
       bookingAvailable: true,
     };
   }
-  
+
   const [hours, minutes] = transferTime.split(":").map(Number);
   const totalMinutes = hours * 60 + minutes;
-  
+
   let basePrice: number;
   let category: string;
-  
+
   // 3am to 6am: Early morning rate (R160 + R50 additional)
   if (totalMinutes >= 180 && totalMinutes < 360) {
     basePrice = LODGE_EARLY_MORNING_BASE;
@@ -189,9 +199,10 @@ export function calculateLodgeToAirportPricing(
     basePrice = LODGE_EARLY_MORNING_BASE;
     category = "early-morning";
   }
-  
+
   const additionalPersonPrice = LODGE_ADDITIONAL;
-  let subtotal = basePrice + Math.max(0, totalPassengers - 1) * additionalPersonPrice;
+  let subtotal =
+    basePrice + Math.max(0, totalPassengers - 1) * additionalPersonPrice;
 
   // Add extras
   let extrasTotal = 0;
@@ -203,7 +214,8 @@ export function calculateLodgeToAirportPricing(
   }
 
   const vatAmount = 0; // VAT is 0 for now
-  const total = subtotal + vatAmount;
+  const processingFee = Math.round(subtotal * PROCESSING_FEE_RATE);
+  const total = subtotal + vatAmount + processingFee;
 
   return {
     basePrice,
@@ -213,6 +225,7 @@ export function calculateLodgeToAirportPricing(
     extrasTotal,
     subtotal,
     vatAmount,
+    processingFee,
     total,
     category,
     bookingAvailable: true,
@@ -256,7 +269,8 @@ export function calculateDualTransferPricing(
   const combinedSubtotal =
     firstTransfer.subtotal + secondTransfer.subtotal + extrasTotal;
   const vatAmount = 0; // VAT is 0 for now
-  const total = combinedSubtotal + vatAmount;
+  const processingFee = Math.round(combinedSubtotal * PROCESSING_FEE_RATE);
+  const total = combinedSubtotal + vatAmount + processingFee;
 
   return {
     firstTransfer: {
@@ -270,6 +284,7 @@ export function calculateDualTransferPricing(
     extrasTotal,
     combinedSubtotal,
     vatAmount,
+    processingFee,
     total,
     bothBookingsAvailable:
       firstTransfer.bookingAvailable && secondTransfer.bookingAvailable,

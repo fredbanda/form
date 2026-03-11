@@ -24,6 +24,7 @@ export async function POST(request: Request) {
       subtotal,
       vatAmount,
       totalAmount,
+      processingFee,
       // Additional fields for proper booking record
       flightNumber,
       arrivalDate,
@@ -70,6 +71,7 @@ export async function POST(request: Request) {
       subtotal,
       vatAmount,
       totalAmount,
+      processingFee,
     });
 
     // Create booking in database with all fields
@@ -88,6 +90,7 @@ export async function POST(request: Request) {
         subtotal,
         vat_amount,
         total_amount,
+        processing_fee,
         promo_code,
         payment_status,
         flight_number,
@@ -114,6 +117,7 @@ export async function POST(request: Request) {
         ${subtotal},
         ${vatAmount},
         ${totalAmount},
+        ${processingFee || 0},
         ${promoCode || null},
         'paid',
         ${flightNumber || null},

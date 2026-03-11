@@ -145,6 +145,9 @@ export function StepConfirmation({ state, update }: Props) {
             : pricing?.subtotal,
           vatAmount: dualPricing ? dualPricing.vatAmount : pricing?.vatAmount,
           totalAmount: dualPricing ? dualPricing.total : pricing?.total,
+          processingFee: dualPricing
+            ? dualPricing.processingFee
+            : pricing?.processingFee,
         }),
       });
 
@@ -263,7 +266,7 @@ export function StepConfirmation({ state, update }: Props) {
             </span>
             {pricing?.category !== "day" && (
               <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                {pricing?.category === "night" && "Night rate"}
+                {pricing?.category === "night" && "Early morning rate"}
                 {pricing?.category === "late-night" && "Late night"}
                 {pricing?.category === "evening" && "Evening rate"}
               </span>
@@ -572,6 +575,21 @@ export function StepConfirmation({ state, update }: Props) {
           </span>
         </div>
 
+        {/* Processing Fee */}
+        <div className="mt-1 flex items-center justify-between">
+          <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            Processing Fee (5%)
+            <Info className="h-3.5 w-3.5" />
+          </span>
+          <span className="text-sm text-muted-foreground">
+            {formatZAR(
+              dualPricing
+                ? dualPricing.processingFee
+                : pricing?.processingFee || 0
+            )}
+          </span>
+        </div>
+
         {/* Promo code */}
         {showPromo ? (
           <div className="mt-3">
@@ -624,6 +642,4 @@ export function StepConfirmation({ state, update }: Props) {
     </div>
   );
 }
-
-
 
