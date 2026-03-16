@@ -317,8 +317,7 @@ export function StepServiceType({ state, update, onNext }: Props) {
                 {getTimeCategory(state.arrivalTime) === "night" && (
                   <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
                     <p className="text-sm text-purple-800">
-                      <strong>Night Rate (17:00 - 22:00):</strong> R250 per
-                      passenger, R50 for additional passengers.
+                    
                     </p>
                   </div>
                 )}
