@@ -9,12 +9,12 @@ export const serviceTypeLabels: Record<
   { title: string; description: string }
 > = {
   from_airport: {
-    title: "Pickup from Airport to Road Lodge",
+    title: "Pickup from the Airport to the Road Lodge",
     description: "Private transfer from the airport to the Road Lodge",
   },
   from_lodge: {
-    title: "Pickup from Road Lodge to Airport",
-    description: "Private transfer from Lodge to Airport",
+    title: "Pickup from the Road Lodge to the Airport",
+    description: "Private transfer from the Road Lodge to the Airport",
   },
 };
 
