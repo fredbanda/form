@@ -279,7 +279,7 @@ export function calculateDualTransferPricing(
     },
     secondTransfer: {
       ...secondTransfer,
-      description: `Lodge → Airport (Morning Rate)`,
+      description: `Lodge → Airport`,
     },
     extrasTotal,
     combinedSubtotal,
