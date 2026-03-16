@@ -560,7 +560,7 @@ export function StepServiceType({ state, update, onNext }: Props) {
                     return (
                       <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
                         <p className="text-sm text-orange-800">
-                          <strong>Early Morning Rate (3am - 6am):</strong> R160 for first passenger, R50 for additional passengers.
+                          {/* <strong>Early Morning Rate (3am - 6am):</strong> R160 for first passenger, R50 for additional passengers. */}
                         </p>
                       </div>
                     );

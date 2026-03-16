@@ -233,14 +233,14 @@ export function StepExtras({ state, update }: Props) {
                         <p className="text-sm font-medium text-blue-800">
                           {totalPassengers} passengers
                         </p>
-                        <p className="text-xs text-blue-600">
+                        {/* <p className="text-xs text-blue-600">
                           {dualPricing.firstTransfer.category === "evening" &&
                             "Early Morning Rate"}
                           {dualPricing.firstTransfer.category === "night" &&
                             "Early Morning Rate"}
                           {dualPricing.firstTransfer.category ===
                             "late-night" && "Late night"}
-                        </p>
+                        </p> */}
                       </div>
                     </div>
                     <p className="text-lg font-semibold text-blue-800">
