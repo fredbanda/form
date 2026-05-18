@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ExecutiveToursFooterBrand } from "@/components/booking/executive-brand";
 import { isNightTime } from "@/lib/pricing";
-import { Badge } from "@/components/ui/badge";
 
 interface Props {
   ref_: string;
@@ -88,12 +87,14 @@ export function BookingConfirmedClient({
           </div>
         </div>
 
-        <p className="mt-4 text-center text-sm leading-relaxed text-muted-foreground">
-          Dear {customerName} once you exit the arrival hall, please switch on
-          your wifi in order for your whatsapp to work. The driver will meet you
-          at the arrivals hall with your name reflected on a name board. Kindly
-          send us a WhatsApp when you have collected your luggage.
-        </p>
+        {serviceType === "airport_to_lodge" && (
+          <p className="mt-4 text-center text-sm leading-relaxed text-muted-foreground">
+            Dear {customerName} once you exit the arrival hall, please switch on
+            your wifi in order for your whatsapp to work. The driver will meet you
+            at the arrivals hall with your name reflected on a name board. Kindly
+            send us a WhatsApp when you have collected your luggage.
+          </p>
+        )}
       
 
         {/* WhatsApp CTA */}

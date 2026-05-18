@@ -135,7 +135,7 @@ export function calculatePricing(
 }
 
 // Lodge to Airport pricing constants
-export const LODGE_EARLY_MORNING_BASE = 15000; // R160 for first person (3am - 6am)
+export const LODGE_EARLY_MORNING_BASE = 17000; // R170 for first person (3am - 6am)
 export const LODGE_MORNING_BASE = 11000; // R110 for first person (6am - 17h00)
 export const LODGE_ADDITIONAL = 5000; // R50 for additional person (both time periods)
 
