@@ -5,15 +5,15 @@ export interface Extra {
 }
 
 // Time-based pricing in cents
-export const PRICING_EVENING_BASE = 15000; // R160 for first person (17:01 - 06:00)
+export const PRICING_EVENING_BASE = 17000; // R160 for first person (17:01 - 06:00)
 export const PRICING_EVENING_ADDITIONAL = 5000; // R60 for additional person (17:01 - 06:00)
 
 export const PRICING_NIGHT_BASE = 25000; // R250 per person (17:00 - 22:00)
 export const PRICING_NIGHT_ADDITIONAL = 5000; // R50 for additional person (17:00 - 22:00)
 
-export const LATE_NIGHT_SURCHARGE = 15000; // R150 extra after 22:00
-export const VAT_RATE = 0.15;
-export const PROCESSING_FEE_RATE = 0.05; // 5% processing fee
+export const LATE_NIGHT_SURCHARGE = 17000; // R150 extra after 22:00
+export const VAT_RATE = 0; // VAT removed
+export const PROCESSING_FEE_RATE = 0; // Processing fee removed
 
 export function formatZAR(cents: number): string {
   return `ZAR ${(cents / 100).toLocaleString("en-ZA", {
@@ -113,10 +113,9 @@ export function calculatePricing(
     subtotal += extra.price;
   }
 
-  // VAT is 0 for now as shown in the screenshot, but we keep the calculation ready
+  // VAT and processing fees are removed (set to 0)
   const vatAmount = 0;
-  // Calculate 5% processing fee on subtotal
-  const processingFee = Math.round(subtotal * PROCESSING_FEE_RATE);
+  const processingFee = 0;
   const total = subtotal + vatAmount + processingFee;
 
   return {
@@ -160,19 +159,20 @@ export function calculateLodgeToAirportPricing(
       }
     }
 
-    const processingFee = Math.round(subtotal * PROCESSING_FEE_RATE);
+    const vatAmount = 0; // VAT removed
+    const processingFee = 0; // Processing fee removed
+    const total = subtotal + vatAmount + processingFee;
 
     return {
       basePrice,
       additionalPersonPrice,
-      lateNightSurcharge: 0,
-      extraPeopleTotal:
-        Math.max(0, totalPassengers - 1) * additionalPersonPrice,
+      lateNightSurcharge: 0, // Never applies for lodge to airport
+      extraPeopleTotal: Math.max(0, totalPassengers - 1) * additionalPersonPrice,
       extrasTotal,
       subtotal,
-      vatAmount: 0,
+      vatAmount,
       processingFee,
-      total: subtotal + processingFee,
+      total,
       category: "early-morning",
       bookingAvailable: true,
     };
@@ -213,8 +213,8 @@ export function calculateLodgeToAirportPricing(
     }
   }
 
-  const vatAmount = 0; // VAT is 0 for now
-  const processingFee = Math.round(subtotal * PROCESSING_FEE_RATE);
+  const vatAmount = 0; // VAT removed
+  const processingFee = 0; // Processing fee removed
   const total = subtotal + vatAmount + processingFee;
 
   return {
@@ -260,6 +260,11 @@ export function calculateDualTransferPricing(
     []
   );
 
+  // Guard against null returns
+  if (!firstTransfer || !secondTransfer) {
+    return null;
+  }
+
   // Add extras only once to the total
   let extrasTotal = 0;
   for (const extra of selectedExtras) {
@@ -268,8 +273,8 @@ export function calculateDualTransferPricing(
 
   const combinedSubtotal =
     firstTransfer.subtotal + secondTransfer.subtotal + extrasTotal;
-  const vatAmount = 0; // VAT is 0 for now
-  const processingFee = Math.round(combinedSubtotal * PROCESSING_FEE_RATE);
+  const vatAmount = 0; // VAT removed
+  const processingFee = 0; // Processing fee removed
   const total = combinedSubtotal + vatAmount + processingFee;
 
   return {

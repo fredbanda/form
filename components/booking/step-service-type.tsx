@@ -278,6 +278,32 @@ export function StepServiceType({ state, update, onNext }: Props) {
             />
           </div>
 
+          {/* Number of Extra Passengers */}
+          <div className="flex flex-col gap-1">
+            <Label
+              htmlFor="extra-passengers"
+              className="text-sm font-medium text-foreground"
+            >
+              Number of Extra Passengers
+            </Label>
+            <Input
+              id="extra-passengers"
+              type="number"
+              min="0"
+              max="19"
+              placeholder="Number of additional passengers"
+              value={state.extraPeople}
+              onChange={(e) => {
+                const extraPeople = Math.max(0, parseInt(e.target.value) || 0);
+                update({
+                  extraPeople,
+                  totalPassengers: 1 + extraPeople,
+                });
+              }}
+              className="h-12 rounded-lg"
+            />
+          </div>
+
           {/* Time of Arrival */}
           <div className="flex flex-col gap-1">
             <Label
@@ -316,15 +342,13 @@ export function StepServiceType({ state, update, onNext }: Props) {
                 )}
                 {getTimeCategory(state.arrivalTime) === "night" && (
                   <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
-                    <p className="text-sm text-purple-800">
-                  
-                    </p>
+                    <p className="text-sm text-purple-800"></p>
                   </div>
                 )}
                 {getTimeCategory(state.arrivalTime) === "late-night" && (
                   <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
                     <p className="text-sm text-red-800">
-                      <strong>Late night surcharge (After 22:00)</strong> 
+                      <strong>Late night surcharge (After 22:00)</strong>
                     </p>
                   </div>
                 )}
@@ -552,9 +576,11 @@ export function StepServiceType({ state, update, onNext }: Props) {
             {state.transferTime && (
               <div className="mt-2">
                 {(() => {
-                  const [hours, minutes] = state.transferTime.split(":").map(Number);
+                  const [hours, minutes] = state.transferTime
+                    .split(":")
+                    .map(Number);
                   const totalMinutes = hours * 60 + minutes;
-                  
+
                   // 3am to 6am: Early morning rate
                   if (totalMinutes >= 180 && totalMinutes < 360) {
                     return (
@@ -570,7 +596,8 @@ export function StepServiceType({ state, update, onNext }: Props) {
                     return (
                       <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
                         <p className="text-sm text-green-800">
-                          <strong>Morning Rate (6am - 17h00):</strong> R110 for first passenger, R50 for additional passengers.
+                          <strong>Morning Rate (6am - 17h00):</strong> R110 for
+                          first passenger, R50 for additional passengers.
                         </p>
                       </div>
                     );
@@ -580,7 +607,8 @@ export function StepServiceType({ state, update, onNext }: Props) {
                     return (
                       <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
                         <p className="text-sm text-orange-800">
-                          <strong>Early Morning Rate:</strong> R160 for first passenger, R50 for additional passengers.
+                          <strong>Early Morning Rate:</strong> R160 for first
+                          passenger, R50 for additional passengers.
                         </p>
                       </div>
                     );

@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Minus, Users, User, Moon, Sun } from "lucide-react";
+import { Plus, User, Moon, Users } from "lucide-react";
 import {
   formatZAR,
   calculatePricing,
@@ -34,45 +34,14 @@ export function StepExtras({ state, update }: Props) {
     }
   };
 
-
-
-  const incrementPeople = () => {
-    console.log(
-      "Increment clicked, current totalPassengers:",
-      state.totalPassengers
-    );
-    const newTotalPassengers = state.totalPassengers + 1;
-    update({
-      totalPassengers: newTotalPassengers,
-      extraPeople: newTotalPassengers - 1,
-    });
-    console.log("Updated to:", newTotalPassengers);
-  };
-
-  const decrementPeople = () => {
-    console.log(
-      "Decrement clicked, current totalPassengers:",
-      state.totalPassengers
-    );
-    if (state.totalPassengers > 1) {
-      const newTotalPassengers = state.totalPassengers - 1;
-      update({
-        totalPassengers: newTotalPassengers,
-        extraPeople: newTotalPassengers - 1,
-      });
-      console.log("Updated to:", newTotalPassengers);
-    } else {
-      console.log("Cannot decrement below 1");
-    }
-  };
-
   // Get the relevant time and calculate pricing
   const relevantTime =
     state.serviceType === "from_airport"
       ? state.arrivalTime
       : state.transferTime || "00:00";
 
-  const totalPassengers = state.totalPassengers;
+  // Calculate total passengers: 1 (main) + extra people
+  const totalPassengers = 1 + state.extraPeople;
 
   // Check if this is a dual transfer (Airport → Lodge + Lodge → Airport next morning)
   const isDualTransfer =
@@ -163,52 +132,6 @@ export function StepExtras({ state, update }: Props) {
       </div>
 
       <div className="flex flex-col gap-6">
-        {/* Passenger Selection Section */}
-        <div>
-          <h2 className="mb-3 text-lg font-semibold text-foreground">
-            Number of Passengers
-          </h2>
-
-          <div className="flex flex-col gap-4 rounded-xl border-2 border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <Users className="h-5 w-5" />
-              </span>
-              <div>
-                <p className="font-semibold text-foreground">
-                  Total Passengers
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Including yourself
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-center gap-4 sm:justify-end">
-              <button
-                type="button"
-                onClick={decrementPeople}
-                disabled={state.totalPassengers === 1}
-                className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-border bg-card text-foreground transition-all duration-200 hover:bg-muted active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation select-none"
-                aria-label="Remove person"
-              >
-                <Minus className="h-5 w-5" />
-              </button>
-              <span className="min-w-[3rem] text-center text-xl font-bold text-foreground">
-                {state.totalPassengers}
-              </span>
-              <button
-                type="button"
-                onClick={incrementPeople}
-                className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-border bg-card text-foreground transition-all duration-200 hover:bg-muted active:scale-95 touch-manipulation select-none"
-                aria-label="Add person"
-              >
-                <Plus className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-
         {/* Pricing Breakdown Section */}
         <div>
           <h2 className="mb-3 text-lg font-semibold text-foreground">
@@ -406,6 +329,4 @@ export function StepExtras({ state, update }: Props) {
     </div>
   );
 }
-
-
 
